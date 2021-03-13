@@ -10,8 +10,8 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.senders.jgs.configs.ServerConfig;
-import io.senders.jgs.request.AbstractRouteHandler;
 import io.senders.jgs.request.MessageHandler;
+import io.senders.jgs.request.RouteHandler;
 import io.senders.jgs.util.SSLContext;
 
 public class Server {
@@ -22,7 +22,7 @@ public class Server {
     this.config = config;
   }
 
-  public void run(final AbstractRouteHandler routeHandler) throws Exception {
+  public void run(final RouteHandler routeHandler) throws Exception {
     final SslContext sslContext = SSLContext.fromConfig(config);
 
     final EventLoopGroup mainGroup = new NioEventLoopGroup();

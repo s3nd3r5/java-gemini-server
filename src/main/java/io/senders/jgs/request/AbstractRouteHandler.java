@@ -5,7 +5,7 @@ import io.senders.jgs.response.ResponseMessage;
 import java.net.URI;
 import java.util.Objects;
 
-public abstract class AbstractRouteHandler {
+public abstract class AbstractRouteHandler implements RouteHandler {
   protected final ServerConfig config;
 
   public AbstractRouteHandler(ServerConfig config) {

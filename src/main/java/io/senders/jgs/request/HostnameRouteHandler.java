@@ -6,7 +6,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 
-public class HostnameRouteHandler<T extends AbstractRouteHandler> extends AbstractRouteHandler {
+public class HostnameRouteHandler<T extends RouteHandler> extends AbstractRouteHandler {
 
   private final Map<String, T> hostnameHandlerMap;
 

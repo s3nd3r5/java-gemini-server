@@ -17,9 +17,9 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final AbstractRouteHandler routeHandler;
+  private final RouteHandler routeHandler;
 
-  public MessageHandler(AbstractRouteHandler routeHandler) {
+  public MessageHandler(RouteHandler routeHandler) {
     this.routeHandler = routeHandler;
   }
 
