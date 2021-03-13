@@ -1,5 +1,13 @@
 package io.senders.jgs.util;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Optional;
+
 public class FileUtil {
   private FileUtil() {}
 
@@ -17,6 +25,25 @@ public class FileUtil {
       return filename.substring(filename.lastIndexOf('.') + 1);
     } else {
       return "";
+    }
+  }
+
+  /**
+   * Parse the title out of a file
+   *
+   * @param file file to read
+   * @return file's title
+   * @throws UncheckedIOException to be handled by the caller
+   */
+  public static Optional<String> getTitle(final File file) throws UncheckedIOException {
+    try {
+      return Files.readAllLines(Path.of(file.getAbsolutePath()), StandardCharsets.UTF_8).stream()
+          .filter(l -> l.startsWith("# "))
+          .findFirst()
+          .map(line -> line.substring(2))
+          .map(String::trim);
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
     }
   }
 }
