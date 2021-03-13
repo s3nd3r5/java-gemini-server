@@ -10,19 +10,23 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.request.AbstractRouteHandler;
+import io.senders.jgs.request.MessageHandler;
 import io.senders.jgs.util.SSLContext;
 
 public class Server {
 
-  public Server() {}
+  private final ServerConfig config;
 
-  public void run() throws Exception {
-    final ServerConfig config = ServerConfig.create();
-    final FileManager fileManager = FileManager.fromConfig(config);
+  public Server(final ServerConfig config) {
+    this.config = config;
+  }
+
+  public void run(final AbstractRouteHandler routeHandler) throws Exception {
     final SslContext sslContext = SSLContext.fromConfig(config);
 
-    EventLoopGroup mainGroup = new NioEventLoopGroup();
-    EventLoopGroup workerGroup = new NioEventLoopGroup();
+    final EventLoopGroup mainGroup = new NioEventLoopGroup();
+    final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
     try {
       ServerBootstrap b = new ServerBootstrap();
@@ -34,20 +38,16 @@ public class Server {
                 protected void initChannel(SocketChannel ch) {
                   ch.pipeline()
                       .addLast("ssl", sslContext.newHandler(ch.alloc()))
-                      .addLast(new MessageHandler(fileManager));
+                      .addLast(new MessageHandler(routeHandler));
                 }
               })
           .option(ChannelOption.SO_BACKLOG, 128)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
-      ChannelFuture cf = b.bind(config.getHostname(), config.getPort()).sync();
+      final ChannelFuture cf = b.bind(config.getHostname(), config.getPort()).sync();
       cf.channel().closeFuture().sync();
     } finally {
       workerGroup.shutdownGracefully();
       mainGroup.shutdownGracefully();
     }
-  }
-
-  public static void main(String... args) throws Exception {
-    new Server().run();
   }
 }

@@ -1,4 +1,4 @@
-package io.senders.jgs;
+package io.senders.jgs.request;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -17,10 +17,10 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final FileManager fileManager;
+  private final AbstractRouteHandler routeHandler;
 
-  public MessageHandler(FileManager fileManager) {
-    this.fileManager = fileManager;
+  public MessageHandler(AbstractRouteHandler routeHandler) {
+    this.routeHandler = routeHandler;
   }
 
   @Override
@@ -54,7 +54,7 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
 
       URI uri = URI.create(url);
 
-      ResponseMessage response = fileManager.load(uri);
+      ResponseMessage response = routeHandler.handle(uri);
 
       byte[] data = response.toResponseMessage();
       ByteBuf res = ctx.alloc().buffer(data.length);

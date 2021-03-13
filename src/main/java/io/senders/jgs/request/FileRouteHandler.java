@@ -1,4 +1,4 @@
-package io.senders.jgs;
+package io.senders.jgs.request;
 
 import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.exceptions.InvalidResourceException;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileManager {
+public class FileRouteHandler extends AbstractRouteHandler {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String LINK_FMT = "=> %s %s";
@@ -31,21 +31,27 @@ public class FileManager {
   private final String defaultLang;
   private final String docRoot;
 
-  private FileManager(final MimeTypes mimeTypes, final String docRoot, final String defaultLang) {
+  private FileRouteHandler(
+      final ServerConfig config,
+      final MimeTypes mimeTypes,
+      final String docRoot,
+      final String defaultLang) {
+    super(config);
     this.mimeTypes = mimeTypes;
     this.docRoot = docRoot;
     this.defaultLang = defaultLang;
   }
 
-  public static FileManager fromConfig(final ServerConfig config) {
+  public static FileRouteHandler fromConfig(final ServerConfig config) {
     final MimeTypes mimeTypes = new MimeTypes(config.getMimeOverrides());
     final String docRoot = config.getDocRoot();
     final String defaultLang = config.getDefaultLang().orElse(null);
 
-    return new FileManager(mimeTypes, docRoot, defaultLang);
+    return new FileRouteHandler(config, mimeTypes, docRoot, defaultLang);
   }
 
-  public ResponseMessage load(URI uri) {
+  @Override
+  public ResponseMessage handle(URI uri) {
     try {
       String path = uri.getPath();
       if (path.endsWith("/")) {
