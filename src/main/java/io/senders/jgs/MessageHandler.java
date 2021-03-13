@@ -6,7 +6,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import io.senders.jgs.exceptions.ServerBaseException;
-import io.senders.jgs.response.ResponseDoc;
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
 import java.lang.invoke.MethodHandles;
@@ -55,9 +54,9 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
 
       URI uri = URI.create(url);
 
-      ResponseDoc responseDoc = fileManager.load(uri);
+      ResponseMessage response = fileManager.load(uri);
 
-      byte[] data = responseDoc.toResponseMessage();
+      byte[] data = response.toResponseMessage();
       ByteBuf res = ctx.alloc().buffer(data.length);
       res.writeBytes(data);
       logger.info("Served: {}", new String(data));

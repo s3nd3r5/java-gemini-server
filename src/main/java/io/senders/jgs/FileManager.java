@@ -5,6 +5,8 @@ import io.senders.jgs.exceptions.InvalidResourceException;
 import io.senders.jgs.exceptions.ResourceNotFoundException;
 import io.senders.jgs.mime.MimeTypes;
 import io.senders.jgs.response.ResponseDoc;
+import io.senders.jgs.response.ResponseMessage;
+import io.senders.jgs.status.GeminiStatus;
 import io.senders.jgs.util.FileUtil;
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +40,7 @@ public class FileManager {
     return new FileManager(mimeTypes, docRoot, defaultLang);
   }
 
-  public ResponseDoc load(URI uri) {
+  public ResponseMessage load(URI uri) {
     try {
       // TODO figure out how to handle index directories best
       String path = uri.getPath();
@@ -47,6 +49,10 @@ public class FileManager {
       }
       Path docPath = Paths.get(docRoot, path);
       File file = docPath.toFile();
+
+      if (file.isDirectory()) {
+        return new ResponseMessage(GeminiStatus.REDIRECT_PERMANENT, path + "/");
+      }
 
       if (!file.exists() || !file.canRead()) {
         throw new ResourceNotFoundException(path + " not found");
