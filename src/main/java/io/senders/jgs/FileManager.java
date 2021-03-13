@@ -1,5 +1,6 @@
 package io.senders.jgs;
 
+import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.exceptions.InvalidResourceException;
 import io.senders.jgs.exceptions.ResourceNotFoundException;
 import io.senders.jgs.mime.MimeTypes;
@@ -19,11 +20,22 @@ public class FileManager {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private static final String BASE_PATH = "/tmp/docs";
   private final MimeTypes mimeTypes;
+  private final String defaultLang;
+  private final String docRoot;
 
-  public FileManager(final MimeTypes mimeTypes) {
+  private FileManager(final MimeTypes mimeTypes, final String docRoot, final String defaultLang) {
     this.mimeTypes = mimeTypes;
+    this.docRoot = docRoot;
+    this.defaultLang = defaultLang;
+  }
+
+  public static FileManager fromConfig(final ServerConfig config) {
+    final MimeTypes mimeTypes = new MimeTypes(config.getMimeOverrides());
+    final String docRoot = config.getDocRoot();
+    final String defaultLang = config.getDefaultLang().orElse(null);
+
+    return new FileManager(mimeTypes, docRoot, defaultLang);
   }
 
   public ResponseDoc load(URI uri) {
@@ -33,7 +45,7 @@ public class FileManager {
       if (path.endsWith("/")) {
         path += "index.gmi";
       }
-      Path docPath = Paths.get(BASE_PATH, path);
+      Path docPath = Paths.get(docRoot, path);
       File file = docPath.toFile();
 
       if (!file.exists() || !file.canRead()) {
@@ -44,7 +56,7 @@ public class FileManager {
       String mimeType = mimeTypes.getMimeType(extension, Files.probeContentType(docPath));
       byte[] data = Files.readAllBytes(docPath);
 
-      return new ResponseDoc(mimeType, null, "en", data);
+      return new ResponseDoc(mimeType, null, defaultLang, data);
     } catch (IOException e) {
       logger.error("Unable to read resource", e);
       throw new InvalidResourceException("Unexpected error reading requested resource");

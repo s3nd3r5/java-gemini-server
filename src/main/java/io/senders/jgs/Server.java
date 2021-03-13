@@ -9,19 +9,18 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
-import io.senders.jgs.mime.MimeTypes;
+import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.util.SSLContext;
-import java.util.Map;
 
 public class Server {
-  private int port;
 
-  public Server(int port) {
-    this.port = port;
-  }
+  public Server() {}
 
   public void run() throws Exception {
-    FileManager fileManager = new FileManager(new MimeTypes(Map.of()));
+    final ServerConfig config = ServerConfig.create();
+    final FileManager fileManager = FileManager.fromConfig(config);
+    final SslContext sslContext = SSLContext.fromConfig(config);
+
     EventLoopGroup mainGroup = new NioEventLoopGroup();
     EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -32,16 +31,15 @@ public class Server {
           .childHandler(
               new ChannelInitializer<SocketChannel>() {
                 @Override
-                protected void initChannel(SocketChannel ch) throws Exception {
-                  SslContext ctx = SSLContext.singleton();
+                protected void initChannel(SocketChannel ch) {
                   ch.pipeline()
-                      .addLast("ssl", ctx.newHandler(ch.alloc()))
+                      .addLast("ssl", sslContext.newHandler(ch.alloc()))
                       .addLast(new MessageHandler(fileManager));
                 }
               })
           .option(ChannelOption.SO_BACKLOG, 128)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
-      ChannelFuture cf = b.bind(port).sync();
+      ChannelFuture cf = b.bind(config.getHostname(), config.getPort()).sync();
       cf.channel().closeFuture().sync();
     } finally {
       workerGroup.shutdownGracefully();
@@ -50,6 +48,6 @@ public class Server {
   }
 
   public static void main(String... args) throws Exception {
-    new Server(1965).run();
+    new Server().run();
   }
 }
