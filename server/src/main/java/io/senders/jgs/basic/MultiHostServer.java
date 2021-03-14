@@ -1,7 +1,7 @@
 package io.senders.jgs.basic;
 
 import io.senders.jgs.Server;
-import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.configs.configs.ServerConfig;
 import io.senders.jgs.request.FileRouteHandler;
 import io.senders.jgs.request.HostnameRouteHandler;
 import io.senders.jgs.request.RouteHandler;

@@ -2,7 +2,7 @@ package io.senders.jgs.util;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.configs.configs.ServerConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;

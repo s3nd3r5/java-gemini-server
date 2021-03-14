@@ -1,6 +1,6 @@
 package io.senders.jgs.request;
 
-import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.configs.configs.ServerConfig;
 import io.senders.jgs.exceptions.InvalidResourceException;
 import io.senders.jgs.exceptions.ResourceNotFoundException;
 import io.senders.jgs.mime.MimeTypes;

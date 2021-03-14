@@ -1,7 +1,7 @@
 package io.senders.jgs.basic;
 
 import io.senders.jgs.Server;
-import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.configs.configs.ServerConfig;
 import io.senders.jgs.request.FileRouteHandler;
 
 public class BasicFileServer {

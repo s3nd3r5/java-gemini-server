@@ -1,5 +1,6 @@
 package io.senders.jgs;
 
+import com.typesafe.config.ConfigFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -10,7 +11,7 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
-import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.configs.configs.ServerConfig;
 import io.senders.jgs.request.MessageHandler;
 import io.senders.jgs.request.RouteHandler;
 import io.senders.jgs.util.SslContextFactory;
@@ -25,6 +26,7 @@ public class Server {
   }
 
   public void run(final RouteHandler routeHandler) throws Exception {
+    ConfigFactory.load("server.conf");
     final SslContext sslContext = SslContextFactory.fromConfig(config);
     final SslContext sslContext1 =
         SslContextFactory.fromConfig(ServerConfig.create("./localhost.properties"));

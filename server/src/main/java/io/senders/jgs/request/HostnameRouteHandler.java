@@ -1,6 +1,6 @@
 package io.senders.jgs.request;
 
-import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.configs.configs.ServerConfig;
 import io.senders.jgs.response.ResponseMessage;
 import java.net.URI;
 import java.util.Map;

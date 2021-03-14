@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class MimeTypes {
 
-  private static final String DEFAULT_TYPE = "application/octect-stream";
+  private static final String DEFAULT_TYPE = "application/octet-stream";
   private static final Map<String, String> DEFAULT_TYPES =
       Map.of(
           "gmi", "text/gemini",
