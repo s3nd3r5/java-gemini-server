@@ -8,11 +8,13 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.request.MessageHandler;
 import io.senders.jgs.request.RouteHandler;
 import io.senders.jgs.util.SSLContext;
+import java.util.Map;
 
 public class Server {
 
@@ -24,7 +26,10 @@ public class Server {
 
   public void run(final RouteHandler routeHandler) throws Exception {
     final SslContext sslContext = SSLContext.fromConfig(config);
-
+    final SslContext sslContext1 =
+        SSLContext.fromConfig(ServerConfig.create("./localhost.properties"));
+    final Map<String, SslContext> sniMap =
+        Map.of("example.com", sslContext, "localhost", sslContext1);
     final EventLoopGroup mainGroup = new NioEventLoopGroup();
     final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -37,7 +42,8 @@ public class Server {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                   ch.pipeline()
-                      .addLast("ssl", sslContext.newHandler(ch.alloc()))
+                      .addLast(
+                          "ssl", new SniHandler(input -> sniMap.getOrDefault(input, sslContext)))
                       .addLast(new MessageHandler(routeHandler));
                 }
               })

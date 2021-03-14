@@ -18,6 +18,10 @@ public class MultiHostServer {
             new HostnameRouteHandler<>(
                 config,
                 Map.of(
+                    "localhost",
+                    uri ->
+                        new ResponseDoc(
+                            "text/gemini", null, null, "ok".getBytes(StandardCharsets.UTF_8)),
                     "example.com",
                     FileRouteHandler.fromConfig(config),
                     "test.example.com",
