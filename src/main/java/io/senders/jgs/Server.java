@@ -13,7 +13,7 @@ import io.netty.handler.ssl.SslContext;
 import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.request.MessageHandler;
 import io.senders.jgs.request.RouteHandler;
-import io.senders.jgs.util.SSLContext;
+import io.senders.jgs.util.SslContextFactory;
 import java.util.Map;
 
 public class Server {
@@ -25,9 +25,9 @@ public class Server {
   }
 
   public void run(final RouteHandler routeHandler) throws Exception {
-    final SslContext sslContext = SSLContext.fromConfig(config);
+    final SslContext sslContext = SslContextFactory.fromConfig(config);
     final SslContext sslContext1 =
-        SSLContext.fromConfig(ServerConfig.create("./localhost.properties"));
+        SslContextFactory.fromConfig(ServerConfig.create("./localhost.properties"));
     final Map<String, SslContext> sniMap =
         Map.of("example.com", sslContext, "localhost", sslContext1);
     final EventLoopGroup mainGroup = new NioEventLoopGroup();
