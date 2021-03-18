@@ -1,8 +1,5 @@
 package io.senders.jgs.status;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-
 public enum GeminiStatus {
   INPUT("10"),
   SENSITIVE_INPUT("11"),
@@ -23,13 +20,13 @@ public enum GeminiStatus {
   CERTIFICATE_NOT_AUTHORISED("61"),
   CERTIFICATE_NOT_VALID("62");
 
-  private final byte[] code;
+  private final String code;
 
   GeminiStatus(String code) {
-    this.code = code.getBytes(StandardCharsets.UTF_8);
+    this.code = code;
   }
 
-  public byte[] getCode() {
-    return Arrays.copyOf(this.code, this.code.length);
+  public String code() {
+    return this.code;
   }
 }

@@ -5,7 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
+import java.util.Objects;
 
 public class ResponseMessage {
   private static final byte SPACE = 0x20;
@@ -13,20 +13,28 @@ public class ResponseMessage {
   // status (2) + space (1) + meta (1024) + <cr><lf> (2)
   private static final int MESSAGE_BUFFER_SIZE = 1029;
 
-  private final byte[] status;
-  private final byte[] meta;
+  private final String status;
+  private final String meta;
 
   public ResponseMessage(final GeminiStatus status, final String meta) {
-    this.status = status.getCode();
-    this.meta = meta.getBytes(StandardCharsets.UTF_8);
+    this.status = status.code();
+    this.meta = meta;
+  }
+
+  public String status() {
+    return this.status;
+  }
+
+  public String meta() {
+    return this.meta;
   }
 
   public byte[] toResponseMessage() {
     try {
       var bao = new ByteArrayOutputStream(MESSAGE_BUFFER_SIZE);
-      bao.write(status);
+      bao.write(status.getBytes(StandardCharsets.UTF_8));
       bao.write(SPACE);
-      bao.write(meta);
+      bao.write(meta.getBytes(StandardCharsets.UTF_8));
       bao.write(CR_LF);
       return bao.toByteArray();
     } catch (IOException e) {
@@ -43,13 +51,11 @@ public class ResponseMessage {
       return false;
     }
     ResponseMessage that = (ResponseMessage) o;
-    return Arrays.equals(status, that.status) && Arrays.equals(meta, that.meta);
+    return Objects.equals(status, that.status) && Objects.equals(meta, that.meta);
   }
 
   @Override
   public int hashCode() {
-    int result = Arrays.hashCode(status);
-    result = 31 * result + Arrays.hashCode(meta);
-    return result;
+    return Objects.hash(status, meta);
   }
 }

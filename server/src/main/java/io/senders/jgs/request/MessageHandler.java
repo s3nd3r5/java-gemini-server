@@ -41,16 +41,18 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
         }
         if (bytesRead == 1024) {
           if (buffer.readByte() == '\r') {
+            bytesRead++;
             if (buffer.readByte() != '\n') {
               throw new RuntimeException("Invalid request scheme");
             }
+            bytesRead++;
           } else {
             throw new RuntimeException("Invalid request scheme");
           }
         }
       }
       String url = urlBuffer.toString();
-      logger.info("Received URL {} of {} bytes", url, bytesRead);
+      logger.info("IN\t{}\t{}", url, bytesRead);
 
       URI uri = URI.create(url);
 
@@ -59,9 +61,8 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
       byte[] data = response.toResponseMessage();
       ByteBuf res = ctx.alloc().buffer(data.length);
       res.writeBytes(data);
-      var logData = new String(data);
-      logData = logData.substring(0, logData.indexOf("\r\n"));
-      logger.info("Served: {}", logData);
+
+      logger.info("OUT\t{}\t{}\t{}", response.status(), response.meta(), data.length);
 
       final ChannelFuture f = ctx.writeAndFlush(res);
       f.addListener(
@@ -87,7 +88,6 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
     byte[] data = msg.toResponseMessage();
     ByteBuf res = ctx.alloc().buffer(data.length);
     res.writeBytes(data);
-    logger.info("Served: {}", new String(data));
 
     ctx.writeAndFlush(res);
     ctx.close();
