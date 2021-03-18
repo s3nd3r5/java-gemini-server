@@ -2,7 +2,7 @@ package io.senders.jgs.util;
 
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
-import io.senders.jgs.configs.configs.ServerConfig;
+import io.senders.jgs.configs.CertConfig;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -11,8 +11,8 @@ import java.nio.file.Path;
 /** Factory for creating netty's SSLHandler */
 public class SslContextFactory {
 
-  public static SslContext fromConfig(final ServerConfig config) {
-    return buildSslContext(config.getCertFile(), config.getCertKey());
+  public static SslContext fromConfig(final CertConfig config) {
+    return buildSslContext(config.file(), config.key());
   }
 
   public static SslContext of(final String certPath, final String keyPath) {

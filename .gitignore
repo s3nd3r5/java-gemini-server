@@ -2,4 +2,4 @@
 certs
 target
 *.iml
-server.properties
+example.conf

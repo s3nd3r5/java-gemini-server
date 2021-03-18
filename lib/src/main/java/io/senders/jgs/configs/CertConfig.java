@@ -1,5 +1,7 @@
 package io.senders.jgs.configs;
 
+import java.util.Objects;
+
 public class CertConfig {
   private final String file;
   private final String key;
@@ -23,6 +25,32 @@ public class CertConfig {
 
   public String key() {
     return key;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    CertConfig that = (CertConfig) o;
+    return Objects.equals(file, that.file) && Objects.equals(key, that.key);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(file, key);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("CertConfig{");
+    sb.append("file='").append(file).append('\'');
+    sb.append(", key='").append(key).append('\'');
+    sb.append('}');
+    return sb.toString();
   }
 
   public static final class Builder {

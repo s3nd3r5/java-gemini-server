@@ -1,6 +1,5 @@
 package io.senders.jgs;
 
-import com.typesafe.config.ConfigFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -11,11 +10,12 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
-import io.senders.jgs.configs.configs.ServerConfig;
+import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.request.AsyncSniMapping;
 import io.senders.jgs.request.MessageHandler;
 import io.senders.jgs.request.RouteHandler;
 import io.senders.jgs.util.SslContextFactory;
-import java.util.Map;
+import io.senders.jgs.util.SslHandlerProvider;
 
 public class Server {
 
@@ -26,12 +26,17 @@ public class Server {
   }
 
   public void run(final RouteHandler routeHandler) throws Exception {
-    ConfigFactory.load("server.conf");
-    final SslContext sslContext = SslContextFactory.fromConfig(config);
-    final SslContext sslContext1 =
-        SslContextFactory.fromConfig(ServerConfig.create("./localhost.properties"));
-    final Map<String, SslContext> sniMap =
-        Map.of("example.com", sslContext, "localhost", sslContext1);
+    // use default SslHandler or SniHandler based on SNI configuration
+    final SslHandlerProvider sslHandlerProvider;
+    if (config.sni()) {
+      sslHandlerProvider = (_unused) -> new SniHandler(AsyncSniMapping.fromConfig(config));
+    } else {
+      final SslContext sslContext =
+          SslContextFactory.fromConfig(config.hosts().get(config.hostname()).cert());
+      sslHandlerProvider = (ch) -> sslContext.newHandler(ch.alloc());
+    }
+
+    // main netty setup and loop
     final EventLoopGroup mainGroup = new NioEventLoopGroup();
     final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
@@ -44,14 +49,13 @@ public class Server {
                 @Override
                 protected void initChannel(SocketChannel ch) {
                   ch.pipeline()
-                      .addLast(
-                          "ssl", new SniHandler(input -> sniMap.getOrDefault(input, sslContext)))
+                      .addLast("ssl", sslHandlerProvider.apply(ch))
                       .addLast(new MessageHandler(routeHandler));
                 }
               })
           .option(ChannelOption.SO_BACKLOG, 128)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
-      final ChannelFuture cf = b.bind(config.getHostname(), config.getPort()).sync();
+      final ChannelFuture cf = b.bind(config.port()).sync();
       cf.channel().closeFuture().sync();
     } finally {
       workerGroup.shutdownGracefully();

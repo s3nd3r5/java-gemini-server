@@ -31,6 +31,32 @@ public class MimeOverrideConfig {
     return new Builder().withFiles(copy.files()).withExtensions(copy.extensions());
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    MimeOverrideConfig that = (MimeOverrideConfig) o;
+    return Objects.equals(files, that.files) && Objects.equals(extensions, that.extensions);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(files, extensions);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("MimeOverrideConfig{");
+    sb.append("files=").append(files);
+    sb.append(", extensions=").append(extensions);
+    sb.append('}');
+    return sb.toString();
+  }
+
   public static class Builder {
     private Map<String, String> files = new HashMap<>();
     private Map<String, String> extensions = new HashMap<>();

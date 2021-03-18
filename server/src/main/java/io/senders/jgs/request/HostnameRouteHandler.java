@@ -1,17 +1,15 @@
 package io.senders.jgs.request;
 
-import io.senders.jgs.configs.configs.ServerConfig;
 import io.senders.jgs.response.ResponseMessage;
 import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 
-public class HostnameRouteHandler<T extends RouteHandler> extends AbstractRouteHandler {
+public class HostnameRouteHandler implements RouteHandler {
 
-  private final Map<String, T> hostnameHandlerMap;
+  private final Map<String, RouteHandler> hostnameHandlerMap;
 
-  public HostnameRouteHandler(final ServerConfig config, final Map<String, T> hostnameHandlerMap) {
-    super(config);
+  public HostnameRouteHandler(final Map<String, RouteHandler> hostnameHandlerMap) {
     this.hostnameHandlerMap = Objects.requireNonNull(hostnameHandlerMap, "hostnameHandlerMap");
   }
 

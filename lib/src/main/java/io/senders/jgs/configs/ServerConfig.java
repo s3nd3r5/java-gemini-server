@@ -7,11 +7,13 @@ import java.util.Objects;
 public class ServerConfig {
   private final boolean sni;
   private final int port;
+  private final String hostname;
   private final Map<String, HostConfig> hosts;
 
-  public ServerConfig(boolean sni, int port, Map<String, HostConfig> hosts) {
+  public ServerConfig(boolean sni, int port, String hostname, Map<String, HostConfig> hosts) {
     this.sni = sni;
     this.port = port;
+    this.hostname = hostname;
     this.hosts = Map.copyOf(hosts);
   }
 
@@ -35,6 +37,16 @@ public class ServerConfig {
   }
 
   /**
+   * The default hostname. Used to fetch the host from the hosts map config and as the default host
+   * to provide from SNI. To disable default host cert providing in SNI omit this configuration.
+   *
+   * @return the default hostname
+   */
+  public String hostname() {
+    return hostname;
+  }
+
+  /**
    * The host configuration mapping to be used by the server. Requires at least one host
    * configuration to be set. Each {@link HostConfig} is mapped by hostname (FQDN).
    *
@@ -47,10 +59,19 @@ public class ServerConfig {
     return hosts;
   }
 
+  // TODO document and guard method against nulls
+  public HostConfig defaultHostConfig() {
+    if (hosts.containsKey(hostname)) {
+      return hosts.get(hostname);
+    }
+    throw new IllegalStateException("Default hostname " + hostname + " has no config.");
+  }
+
   /** @see ServerConfig for defaults and required fields. */
   public static Builder newBuilder() {
     return new Builder();
   }
+
   /**
    * Construct a builder from an existing ServerConfig.
    *
@@ -62,14 +83,47 @@ public class ServerConfig {
   public static Builder newBuilder(final ServerConfig fromConfig) {
     return new Builder()
         .withSni(fromConfig.sni)
+        .withHostname(fromConfig.hostname)
         .withHosts(fromConfig.hosts)
         .withPort(fromConfig.port);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ServerConfig config = (ServerConfig) o;
+    return sni == config.sni
+        && port == config.port
+        && Objects.equals(hostname, config.hostname)
+        && Objects.equals(hosts, config.hosts);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("ServerConfig{");
+    sb.append("sni=").append(sni);
+    sb.append(", port=").append(port);
+    sb.append(", hostname='").append(hostname).append('\'');
+    sb.append(", hosts=").append(hosts);
+    sb.append('}');
+    return sb.toString();
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(sni, port, hostname, hosts);
   }
 
   public static class Builder {
 
     private boolean sni;
     private int port;
+    private String hostname;
     private Map<String, HostConfig> hosts = new HashMap<>();
 
     private Builder() {}
@@ -95,6 +149,18 @@ public class ServerConfig {
      */
     public Builder withPort(int port) {
       this.port = port;
+      return this;
+    }
+
+    /**
+     * Sets the default hostname for the server.
+     *
+     * @param hostname the default hostname
+     * @return builder for chaining
+     * @see ServerConfig#hostname()
+     */
+    public Builder withHostname(String hostname) {
+      this.hostname = hostname;
       return this;
     }
 
@@ -150,7 +216,7 @@ public class ServerConfig {
      * @see ServerConfig for required fields and validation
      */
     public ServerConfig build() {
-      return new ServerConfig(sni, port, hosts);
+      return new ServerConfig(sni, port, hostname, hosts);
     }
   }
 }

@@ -1,6 +1,6 @@
 package io.senders.jgs.request;
 
-import io.senders.jgs.configs.configs.ServerConfig;
+import io.senders.jgs.configs.HostConfig;
 import io.senders.jgs.exceptions.InvalidResourceException;
 import io.senders.jgs.exceptions.ResourceNotFoundException;
 import io.senders.jgs.mime.MimeTypes;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileRouteHandler extends AbstractRouteHandler {
+public class FileRouteHandler implements RouteHandler {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String LINK_FMT = "=> %s %s";
@@ -32,22 +32,18 @@ public class FileRouteHandler extends AbstractRouteHandler {
   private final String docRoot;
 
   private FileRouteHandler(
-      final ServerConfig config,
-      final MimeTypes mimeTypes,
-      final String docRoot,
-      final String defaultLang) {
-    super(config);
+      final MimeTypes mimeTypes, final String docRoot, final String defaultLang) {
     this.mimeTypes = mimeTypes;
     this.docRoot = docRoot;
     this.defaultLang = defaultLang;
   }
 
-  public static FileRouteHandler fromConfig(final ServerConfig config) {
-    final MimeTypes mimeTypes = new MimeTypes(config.getMimeOverrides());
-    final String docRoot = config.getDocRoot();
-    final String defaultLang = config.getDefaultLang().orElse(null);
+  public static FileRouteHandler fromConfig(final HostConfig config) {
+    final MimeTypes mimeTypes = new MimeTypes(config.docs().mimeOverrides().extensions());
+    final String docRoot = config.docs().root();
+    final String defaultLang = config.docs().defaultLang();
 
-    return new FileRouteHandler(config, mimeTypes, docRoot, defaultLang);
+    return new FileRouteHandler(mimeTypes, docRoot, defaultLang);
   }
 
   @Override

@@ -1,5 +1,7 @@
 package io.senders.jgs.configs;
 
+import java.util.Objects;
+
 public class HostConfig {
   private final DocsConfig docs;
   private final CertConfig cert;
@@ -28,6 +30,32 @@ public class HostConfig {
 
   public CertConfig cert() {
     return cert;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    HostConfig that = (HostConfig) o;
+    return Objects.equals(docs, that.docs) && Objects.equals(cert, that.cert);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(docs, cert);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("HostConfig{");
+    sb.append("docs=").append(docs);
+    sb.append(", cert=").append(cert);
+    sb.append('}');
+    return sb.toString();
   }
 
   public static final class Builder {

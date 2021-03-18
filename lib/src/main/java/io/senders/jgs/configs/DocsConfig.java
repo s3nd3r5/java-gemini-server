@@ -1,5 +1,7 @@
 package io.senders.jgs.configs;
 
+import java.util.Objects;
+
 public class DocsConfig {
   private final String root;
   private final String defaultLang;
@@ -32,6 +34,35 @@ public class DocsConfig {
         .withDefaultLang(copy.defaultLang)
         .withMimeOverrides(copy.mimeOverrides)
         .withRoot(copy.root);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    DocsConfig that = (DocsConfig) o;
+    return Objects.equals(root, that.root)
+        && Objects.equals(defaultLang, that.defaultLang)
+        && Objects.equals(mimeOverrides, that.mimeOverrides);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(root, defaultLang, mimeOverrides);
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("DocsConfig{");
+    sb.append("root='").append(root).append('\'');
+    sb.append(", defaultLang='").append(defaultLang).append('\'');
+    sb.append(", mimeOverrides=").append(mimeOverrides);
+    sb.append('}');
+    return sb.toString();
   }
 
   public static final class Builder {
