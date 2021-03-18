@@ -21,10 +21,10 @@ public class TypesafeServerConfigFactory {
    * Create a server configuration from the default typesafe locations.
    *
    * @see ConfigFactory#load() for how it searches for files
-   * @return ServerConfig loaded from the server.conf in the classpath
+   * @return ServerConfig loaded from the gemini-server.conf in the classpath
    */
   public static ServerConfig create() {
-    final Config config = ConfigFactory.load();
+    final Config config = ConfigFactory.load("gemini-server.conf");
     return createServerConfig(config);
   }
 

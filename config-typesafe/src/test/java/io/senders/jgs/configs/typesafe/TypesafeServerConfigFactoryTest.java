@@ -99,7 +99,7 @@ class TypesafeServerConfigFactoryTest {
                                 .withMimeOverrides(
                                     MimeOverrideConfig.newBuilder()
                                         .addExtension("xml", "application/xml")
-                                        .addFile("server.conf", "application/hocon")
+                                        .addFile("gemini-server.conf", "application/hocon")
                                         .build())
                                 .build())
                         .build(),
@@ -135,5 +135,14 @@ class TypesafeServerConfigFactoryTest {
         () ->
             TypesafeServerConfigFactory.create(
                 MethodHandles.lookup().lookupClass().getResource("/no_hosts.conf").getPath()));
+  }
+
+  @Test
+  void testEmptyConf() {
+    assertThrows(
+        ConfigException.Missing.class,
+        () ->
+            TypesafeServerConfigFactory.create(
+                MethodHandles.lookup().lookupClass().getResource("/empty.conf").getPath()));
   }
 }
