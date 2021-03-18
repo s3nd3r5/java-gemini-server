@@ -59,7 +59,9 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
       byte[] data = response.toResponseMessage();
       ByteBuf res = ctx.alloc().buffer(data.length);
       res.writeBytes(data);
-      logger.info("Served: {}", new String(data));
+      var logData = new String(data);
+      logData = logData.substring(0, logData.indexOf("\r\n"));
+      logger.info("Served: {}", logData);
 
       final ChannelFuture f = ctx.writeAndFlush(res);
       f.addListener(

@@ -46,34 +46,70 @@
   <build>
     <plugins>
       <plugin>
-        <!-- This will always show red for wahtever reason, don't worry -->
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>3.3.0</version>
-
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
         <configuration>
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
+          <excludes>
+            <exclude>**/logback.xml</exclude>
+          </excludes>
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
               <mainClass>io.senders.jgs.standalone.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
-
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
     </plugins>
   </build>
 
 </project>
+  <!--
+    <plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-assembly-plugin</artifactId>
+  <version>3.3.0</version>
+
+  <configuration>
+  <descriptorRefs>
+    <descriptorRef>jar-with-dependencies</descriptorRef>
+  </descriptorRefs>
+  <archive>
+    <manifest>
+      <addClasspath>true</addClasspath>
+      <mainClass>io.senders.jgs.standalone.Main</mainClass>
+    </manifest>
+  </archive>
+  </configuration>
+
+  <executions>
+  <execution>
+    <id>make-assembly</id>
+    <phase>package</phase>
+    <goals>
+      <goal>single</goal>
+    </goals>
+  </execution>
+  </executions>
+    </plugin>
+  -->

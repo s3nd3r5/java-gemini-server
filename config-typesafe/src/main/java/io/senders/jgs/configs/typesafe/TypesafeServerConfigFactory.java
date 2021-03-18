@@ -18,14 +18,13 @@ public class TypesafeServerConfigFactory {
   private TypesafeServerConfigFactory() {}
 
   /**
-   * Create a server configuration from the default typesafe locations.
+   * Create a server config from the gemini-server.conf file in the working directory
    *
-   * @see ConfigFactory#load() for how it searches for files
-   * @return ServerConfig loaded from the gemini-server.conf in the classpath
+   * @see TypesafeServerConfigFactory#create(String)
+   * @return the server config build from the conf file
    */
   public static ServerConfig create() {
-    final Config config = ConfigFactory.load("gemini-server.conf");
-    return createServerConfig(config);
+    return create("./gemini-server.conf");
   }
 
   public static ServerConfig create(final String configPath) {
