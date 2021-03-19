@@ -3,6 +3,7 @@ package io.senders.jgs.standalone;
 import io.senders.jgs.Server;
 import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.configs.typesafe.TypesafeServerConfigFactory;
+import io.senders.jgs.request.FileRouteHandler;
 import io.senders.jgs.request.PathBasedRouteHandler;
 import io.senders.jgs.response.InputResponseMessage;
 import io.senders.jgs.response.ResponseDoc;
@@ -40,6 +41,7 @@ public class ComplexMain {
                             "UTF-8",
                             null,
                             uri.getQuery().getBytes(StandardCharsets.UTF_8));
-                    })));
+                    }),
+                FileRouteHandler.fromConfig(config.defaultHostConfig())));
   }
 }
