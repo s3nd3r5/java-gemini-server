@@ -1,5 +1,6 @@
 # JGS - Java Gemini Server
 
-An enterprise java server for the gemini space.
+## Open tasks
 
-See branch pre-alpha - as this server is still pre-alpha
+* Define design pattern for creating servers
+* Outline path to

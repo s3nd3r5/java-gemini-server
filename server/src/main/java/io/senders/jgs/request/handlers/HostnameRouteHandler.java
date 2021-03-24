@@ -1,4 +1,4 @@
-package io.senders.jgs.request;
+package io.senders.jgs.request.handlers;
 
 import io.senders.jgs.response.ResponseMessage;
 import java.net.URI;

@@ -1,4 +1,4 @@
-package io.senders.jgs.request;
+package io.senders.jgs.request.handlers;
 
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
@@ -27,4 +27,6 @@ public class PathBasedRouteHandler implements RouteHandler {
   public ResponseMessage handle(final URI uri) {
     return pathHandlers.getOrDefault(uri.getPath(), defaultHandler).handle(uri);
   }
+
+  public static PathBasedRouteHandlerBuilder
 }

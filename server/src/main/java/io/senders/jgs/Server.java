@@ -12,8 +12,8 @@ import io.netty.handler.ssl.SniHandler;
 import io.netty.handler.ssl.SslContext;
 import io.senders.jgs.configs.ServerConfig;
 import io.senders.jgs.request.AsyncSniMapping;
-import io.senders.jgs.request.MessageHandler;
-import io.senders.jgs.request.RouteHandler;
+import io.senders.jgs.request.handlers.MessageHandler;
+import io.senders.jgs.request.handlers.RouteHandler;
 import io.senders.jgs.util.SslContextFactory;
 import io.senders.jgs.util.SslHandlerProvider;
 

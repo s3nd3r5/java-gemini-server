@@ -1,4 +1,4 @@
-package io.senders.jgs.request;
+package io.senders.jgs.request.handlers;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -6,10 +6,14 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import io.senders.jgs.exceptions.ServerBaseException;
+import io.senders.jgs.request.Request;
+import io.senders.jgs.request.Router;
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
+import io.senders.jgs.util.RouteMatcher;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +21,17 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final RouteHandler routeHandler;
+  private final Stream<Router> routers;
+  private final RouteHandler defaultHandler;
 
-  public MessageHandler(RouteHandler routeHandler) {
-    this.routeHandler = routeHandler;
+  public MessageHandler(Router...  routers) {
+    this.routers = Stream.of(routers);
+    this.defaultHandler = new NotFoundHandler();
+  }
+
+  public MessageHandler(RouteHandler defaultHandler, Router... routers) {
+    this.routers = Stream.of(routers);
+    this.defaultHandler = defaultHandler;
   }
 
   @Override
@@ -54,9 +65,13 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
       String url = urlBuffer.toString();
       logger.info("IN\t{}\t{}", url, bytesRead);
 
-      URI uri = URI.create(url);
+      final Request request = new Request(URI.create(url));
 
-      ResponseMessage response = routeHandler.handle(uri);
+      ResponseMessage response = routers.flatMap(Router::routes)
+          .filter(r -> RouteMatcher.match(r.route(), request.uri()))
+          .findFirst()
+          .map(r -> r.handle(request))
+          .orElse(this.defaultHandler.handle(request.uri()));
 
       byte[] data = response.toResponseMessage();
       ByteBuf res = ctx.alloc().buffer(data.length);
