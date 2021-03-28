@@ -103,17 +103,19 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    logger.error("Caught exception", cause);
+    logger.debug("Caught exception", cause);
     final ResponseMessage msg;
     if (cause instanceof ServerBaseException) {
       msg = new ResponseMessage(((ServerBaseException) cause).getStatus(), cause.getMessage());
     } else {
       msg = new ResponseMessage(GeminiStatus.PERMANENT_FAILURE, cause.getMessage());
+      logger.error("Unexpected exception", cause);
     }
-
     byte[] data = msg.toBytes();
     ByteBuf res = ctx.alloc().buffer(data.length);
     res.writeBytes(data);
+
+    logger.info("OUT\t{}\t{}\t{}", msg.status(), msg.meta(), data.length);
 
     ctx.writeAndFlush(res);
     ctx.close();

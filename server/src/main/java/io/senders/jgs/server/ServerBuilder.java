@@ -1,6 +1,7 @@
 package io.senders.jgs.server;
 
 import io.senders.jgs.configs.ServerConfig;
+import io.senders.jgs.request.handlers.NotFoundHandler;
 import io.senders.jgs.request.handlers.RequestHandler;
 import io.senders.jgs.request.routers.Host;
 import java.util.ArrayList;
@@ -10,7 +11,7 @@ import java.util.Collection;
 public class ServerBuilder {
   private ServerConfig config;
   private Collection<Host> hosts = new ArrayList<>();
-  private RequestHandler fallbackRouteHandler;
+  private RequestHandler fallbackRouteHandler = new NotFoundHandler();
 
   private ServerBuilder() {}
 
