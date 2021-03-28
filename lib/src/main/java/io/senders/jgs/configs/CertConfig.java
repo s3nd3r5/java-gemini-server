@@ -7,8 +7,8 @@ public class CertConfig {
   private final String key;
 
   public CertConfig(String file, String key) {
-    this.file = file;
-    this.key = key;
+    this.file = Objects.requireNonNull(file, "file");
+    this.key = Objects.requireNonNull(key, "key");
   }
 
   public static Builder newBuilder() {

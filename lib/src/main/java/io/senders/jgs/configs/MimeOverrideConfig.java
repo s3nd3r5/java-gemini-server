@@ -63,11 +63,6 @@ public class MimeOverrideConfig {
 
     private Builder() {}
 
-    public Builder(MimeOverrideConfig fromConfig) {
-      this.files = new HashMap<>(fromConfig.files);
-      this.extensions = new HashMap<>(fromConfig.extensions);
-    }
-
     public Builder withFiles(Map<String, String> files) {
       this.files = new HashMap<>(Objects.requireNonNull(files, "files"));
       return this;

@@ -8,7 +8,7 @@ import io.senders.jgs.configs.HostConfig;
 import io.senders.jgs.configs.MimeOverrideConfig;
 import io.senders.jgs.configs.ServerConfig;
 import java.io.File;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,14 +21,30 @@ public class TypesafeServerConfigFactory {
    * Create a server config from the gemini-server.conf file in the working directory
    *
    * @see TypesafeServerConfigFactory#create(String)
-   * @return the server config build from the conf file
+   * @return the server config built from the conf file
    */
   public static ServerConfig create() {
     return create("./gemini-server.conf");
   }
 
+  /**
+   * Create a server config from the provided path.
+   *
+   * @param configPath the path to the config file
+   * @return the server config built from the conf file
+   */
   public static ServerConfig create(final String configPath) {
-    File file = Paths.get(configPath).toFile();
+    return create(Path.of(configPath));
+  }
+
+  /**
+   * Create a server config from the provided path.
+   *
+   * @param configPath the path to the config file
+   * @return the server config built from the conf file
+   */
+  public static ServerConfig create(final Path configPath) {
+    File file = configPath.toFile();
     if (!file.exists() || !file.canRead()) {
       throw new IllegalStateException(
           "config file " + configPath + " cannot be read or doesn't exist");

@@ -8,9 +8,10 @@ public class DocsConfig {
   private final MimeOverrideConfig mimeOverrides;
 
   public DocsConfig(String root, String defaultLang, MimeOverrideConfig mimeOverrides) {
-    this.root = root;
+    this.root = Objects.requireNonNull(root, "root");
     this.defaultLang = defaultLang;
-    this.mimeOverrides = mimeOverrides;
+    this.mimeOverrides =
+        mimeOverrides != null ? mimeOverrides : MimeOverrideConfig.newBuilder().build();
   }
 
   public String root() {
