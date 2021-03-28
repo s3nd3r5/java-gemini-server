@@ -30,8 +30,8 @@ public class ResponseDoc extends ResponseMessage {
   }
 
   @Override
-  public byte[] toResponseMessage() {
-    byte[] statusLine = super.toResponseMessage();
+  public byte[] toBytes() {
+    byte[] statusLine = super.toBytes();
     try {
       var bao = new ByteArrayOutputStream(statusLine.length + data.length);
       bao.write(statusLine);

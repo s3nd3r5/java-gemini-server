@@ -13,17 +13,9 @@ import java.lang.invoke.MethodHandles;
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class TypesafeServerConfigFactoryTest {
-
-  @BeforeEach
-  void setUp() {}
-
-  @AfterEach
-  void tearDown() {}
 
   @Test
   void testCreateMinimumConfig() {

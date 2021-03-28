@@ -1,4 +1,4 @@
-package io.senders.jgs.request.handlers;
+package io.senders.jgs.request;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelFuture;
@@ -6,32 +6,39 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import io.senders.jgs.exceptions.ServerBaseException;
-import io.senders.jgs.request.Request;
-import io.senders.jgs.request.Router;
+import io.senders.jgs.request.handlers.NotFoundHandler;
+import io.senders.jgs.request.handlers.RequestHandler;
+import io.senders.jgs.request.routers.Host;
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
 import io.senders.jgs.util.RouteMatcher;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
-import java.util.stream.Stream;
+import java.util.Arrays;
+import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MessageHandler extends ChannelInboundHandlerAdapter {
+public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private final Stream<Router> routers;
-  private final RouteHandler defaultHandler;
+  private final Collection<Host> hosts;
+  private final RequestHandler fallbackRouteHandler;
 
-  public MessageHandler(Router...  routers) {
-    this.routers = Stream.of(routers);
-    this.defaultHandler = new NotFoundHandler();
+  public RequestMessageAdapter(Host... hosts) {
+    this.hosts = Arrays.asList(hosts);
+    this.fallbackRouteHandler = new NotFoundHandler();
   }
 
-  public MessageHandler(RouteHandler defaultHandler, Router... routers) {
-    this.routers = Stream.of(routers);
-    this.defaultHandler = defaultHandler;
+  public RequestMessageAdapter(RequestHandler fallbackRouteHandler, Host... hosts) {
+    this.fallbackRouteHandler = fallbackRouteHandler;
+    this.hosts = Arrays.asList(hosts);
+  }
+
+  public RequestMessageAdapter(final RequestHandler fallbackRouteHandler, Collection<Host> hosts) {
+    this.fallbackRouteHandler = fallbackRouteHandler;
+    this.hosts = hosts;
   }
 
   @Override
@@ -67,13 +74,17 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
 
       final Request request = new Request(URI.create(url));
 
-      ResponseMessage response = routers.flatMap(Router::routes)
-          .filter(r -> RouteMatcher.match(r.route(), request.uri()))
-          .findFirst()
-          .map(r -> r.handle(request))
-          .orElse(this.defaultHandler.handle(request.uri()));
+      ResponseMessage response =
+          hosts.stream()
+              .filter(h -> h.hosts().equals(request.uri().getHost()))
+              .flatMap(h -> h.routers().stream())
+              .flatMap(r -> r.routes().stream())
+              .filter(r -> RouteMatcher.match(r.route(), request.uri()))
+              .findFirst()
+              .map(r -> r.handle(request))
+              .orElse(this.fallbackRouteHandler.handle(request));
 
-      byte[] data = response.toResponseMessage();
+      byte[] data = response.toBytes();
       ByteBuf res = ctx.alloc().buffer(data.length);
       res.writeBytes(data);
 
@@ -100,7 +111,7 @@ public class MessageHandler extends ChannelInboundHandlerAdapter {
       msg = new ResponseMessage(GeminiStatus.PERMANENT_FAILURE, cause.getMessage());
     }
 
-    byte[] data = msg.toResponseMessage();
+    byte[] data = msg.toBytes();
     ByteBuf res = ctx.alloc().buffer(data.length);
     res.writeBytes(data);
 

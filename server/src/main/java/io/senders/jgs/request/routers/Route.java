@@ -1,5 +1,6 @@
-package io.senders.jgs.request;
+package io.senders.jgs.request.routers;
 
+import io.senders.jgs.request.Request;
 import io.senders.jgs.response.ResponseMessage;
 import java.util.function.Function;
 

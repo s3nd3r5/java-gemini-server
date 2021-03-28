@@ -4,6 +4,7 @@ import io.senders.jgs.configs.HostConfig;
 import io.senders.jgs.exceptions.InvalidResourceException;
 import io.senders.jgs.exceptions.ResourceNotFoundException;
 import io.senders.jgs.mime.MimeTypes;
+import io.senders.jgs.request.Request;
 import io.senders.jgs.response.ResponseDoc;
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
@@ -12,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.invoke.MethodHandles;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FileRouteHandler implements RouteHandler {
+public class FileRouteHandler implements RequestHandler {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final String LINK_FMT = "=> %s %s";
@@ -47,7 +47,8 @@ public class FileRouteHandler implements RouteHandler {
   }
 
   @Override
-  public ResponseMessage handle(URI uri) {
+  public ResponseMessage handle(Request request) {
+    var uri = request.uri();
     try {
       String path = uri.getPath();
       if (path.endsWith("/")) {
