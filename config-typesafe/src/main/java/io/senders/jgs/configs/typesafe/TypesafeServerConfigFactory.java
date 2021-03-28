@@ -92,7 +92,7 @@ public class TypesafeServerConfigFactory {
               .build();
 
       HostConfig hostConfig =
-          HostConfig.newBuilder().withDocs(docsConfig.build()).withCert(certConfig).build();
+          HostConfig.newBuilder(hostKey).withDocs(docsConfig.build()).withCert(certConfig).build();
       hostConfigMap.put(hostKey, hostConfig);
     }
 

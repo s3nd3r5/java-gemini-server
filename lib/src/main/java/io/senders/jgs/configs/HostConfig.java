@@ -3,25 +3,26 @@ package io.senders.jgs.configs;
 import java.util.Objects;
 
 public class HostConfig {
+  private final String hostname;
   private final DocsConfig docs;
   private final CertConfig cert;
 
-  public HostConfig(DocsConfig docs, CertConfig cert) {
-    this.docs = docs;
-    this.cert = cert;
+  public HostConfig(final String hostname, final DocsConfig docs, final CertConfig cert) {
+    this.hostname = Objects.requireNonNull(hostname, "hostname");
+    this.docs = Objects.requireNonNull(docs, "docs");
+    this.cert = Objects.requireNonNull(cert, "cert");
   }
 
-  private HostConfig(Builder builder) {
-    docs = builder.docs;
-    cert = builder.cert;
+  public static Builder newBuilder(final String hostname) {
+    return new Builder(hostname);
   }
 
-  public static Builder newBuilder() {
-    return new Builder();
+  public static Builder newBuilder(final HostConfig copy) {
+    return new Builder(copy.hostname).withCert(copy.cert).withDocs(copy.docs);
   }
 
-  public static Builder newBuilder(HostConfig copy) {
-    return new Builder().withCert(copy.cert).withDocs(copy.docs);
+  public String hostname() {
+    return hostname;
   }
 
   public DocsConfig docs() {
@@ -41,29 +42,30 @@ public class HostConfig {
       return false;
     }
     HostConfig that = (HostConfig) o;
-    return Objects.equals(docs, that.docs) && Objects.equals(cert, that.cert);
+    return Objects.equals(hostname, that.hostname)
+        && Objects.equals(docs, that.docs)
+        && Objects.equals(cert, that.cert);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(docs, cert);
-  }
-
-  @Override
-  public String toString() {
-    final StringBuilder sb = new StringBuilder("HostConfig{");
-    sb.append("docs=").append(docs);
-    sb.append(", cert=").append(cert);
-    sb.append('}');
-    return sb.toString();
+    return Objects.hash(hostname, docs, cert);
   }
 
   public static final class Builder {
 
+    private String hostname;
     private DocsConfig docs;
     private CertConfig cert;
 
-    private Builder() {}
+    private Builder(String hostname) {
+      this.hostname = hostname;
+    }
+
+    public Builder withHostname(String hostname) {
+      this.hostname = hostname;
+      return this;
+    }
 
     public Builder withDocs(DocsConfig docs) {
       this.docs = docs;
@@ -76,7 +78,7 @@ public class HostConfig {
     }
 
     public HostConfig build() {
-      return new HostConfig(this);
+      return new HostConfig(this.hostname, this.docs, this.cert);
     }
   }
 }

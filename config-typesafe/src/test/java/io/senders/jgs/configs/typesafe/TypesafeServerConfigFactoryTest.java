@@ -27,7 +27,7 @@ class TypesafeServerConfigFactoryTest {
             .withHosts(
                 Collections.singletonMap(
                     "localhost",
-                    HostConfig.newBuilder()
+                    HostConfig.newBuilder("localhost")
                         .withDocs(DocsConfig.newBuilder().withRoot("/var/gemini").build())
                         .withCert(
                             CertConfig.newBuilder().withKey("key.pem").withFile("cert.pem").build())
@@ -48,7 +48,7 @@ class TypesafeServerConfigFactoryTest {
             .withHosts(
                 Collections.singletonMap(
                     "localhost",
-                    HostConfig.newBuilder()
+                    HostConfig.newBuilder("localhost")
                         .withDocs(DocsConfig.newBuilder().withRoot("/var/gemini").build())
                         .withCert(
                             CertConfig.newBuilder().withKey("key.pem").withFile("cert.pem").build())
@@ -78,7 +78,7 @@ class TypesafeServerConfigFactoryTest {
             .withHosts(
                 Map.of(
                     "senders.io",
-                    HostConfig.newBuilder()
+                    HostConfig.newBuilder("senders.io")
                         .withCert(
                             CertConfig.newBuilder()
                                 .withFile("/etc/certs/senders.io/cert.pem")
@@ -96,7 +96,7 @@ class TypesafeServerConfigFactoryTest {
                                 .build())
                         .build(),
                     "example.com",
-                    HostConfig.newBuilder()
+                    HostConfig.newBuilder("example.com")
                         .withCert(
                             CertConfig.newBuilder()
                                 .withFile("/etc/certs/example.com/cert.pem")
