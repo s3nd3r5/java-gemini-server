@@ -14,7 +14,7 @@ public class ServerConfig {
     this.sni = sni;
     this.port = port;
     this.hostname = hostname;
-    this.hosts = Map.copyOf(hosts);
+    this.hosts = Map.copyOf(Objects.requireNonNull(hosts, "hosts"));
   }
 
   /**

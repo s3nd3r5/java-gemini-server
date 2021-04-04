@@ -92,7 +92,6 @@ class DocsConfigTest {
     assertNull(DocsConfig.newBuilder().withRoot("/").build().defaultLang());
   }
 
-
   @Test
   void testFailsOnEmpty() {
     assertThrows(NullPointerException.class, () -> DocsConfig.newBuilder().build());

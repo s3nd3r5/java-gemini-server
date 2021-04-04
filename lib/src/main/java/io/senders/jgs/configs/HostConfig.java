@@ -34,6 +34,16 @@ public class HostConfig {
   }
 
   @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder("HostConfig{");
+    sb.append("hostname='").append(hostname).append('\'');
+    sb.append(", docs=").append(docs);
+    sb.append(", cert=").append(cert);
+    sb.append('}');
+    return sb.toString();
+  }
+
+  @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;

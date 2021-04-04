@@ -6,6 +6,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.util.ReferenceCountUtil;
 import io.senders.jgs.exceptions.ServerBaseException;
+import io.senders.jgs.logging.AccessLogger;
+import io.senders.jgs.logging.LogbackAccessLogger;
 import io.senders.jgs.request.handlers.NotFoundHandler;
 import io.senders.jgs.request.handlers.RequestHandler;
 import io.senders.jgs.request.routers.Host;
@@ -22,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
+  private static final AccessLogger accessLogger = new LogbackAccessLogger();
   private final Collection<Host> hosts;
   private final RequestHandler fallbackRouteHandler;
 
@@ -70,7 +72,7 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
         }
       }
       String url = urlBuffer.toString();
-      logger.info("IN\t{}\t{}", url, bytesRead);
+      accessLogger.in(ctx.channel().remoteAddress(), url, bytesRead);
 
       final Request request = new Request(URI.create(url));
 
@@ -88,7 +90,7 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
       ByteBuf res = ctx.alloc().buffer(data.length);
       res.writeBytes(data);
 
-      logger.info("OUT\t{}\t{}\t{}", response.status(), response.meta(), data.length);
+      accessLogger.out(response.status(), response.meta(), data.length);
 
       final ChannelFuture f = ctx.writeAndFlush(res);
       f.addListener(
