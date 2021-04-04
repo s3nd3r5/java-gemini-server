@@ -1,0 +1,23 @@
+<assembly>
+  <id>bundle</id>
+  <formats>
+    <format>tar.gz</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <fileSets>
+    <fileSet>
+      <directory>target/</directory>
+      <includes>
+        <include>lib/</include>
+        <include>*.jar</include>
+      </includes>
+      <!-- don't compress the 'target' directory, put it at the root of the archive -->
+      <outputDirectory>./</outputDirectory>
+    </fileSet>
+  </fileSets>
+  <files>
+    <file>
+      <source>../logback.xml</source>
+    </file>
+  </files>
+</assembly>
