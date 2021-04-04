@@ -4,6 +4,7 @@ import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/** Logback based implementation of the AccessLogger. */
 public class LogbackAccessLogger implements AccessLogger {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -26,7 +27,13 @@ public class LogbackAccessLogger implements AccessLogger {
     }
   }
 
-  private void log(String fmt, Object... arguments) {
+  @Override
+  public void log(String fmt, Object... arguments) {
     logger.info(fmt, arguments);
+  }
+
+  @Override
+  public void log(String msg) {
+    logger.info(msg);
   }
 }

@@ -1,6 +1,63 @@
 # JGS - Java Gemini Server
 
-## Open tasks
+An enterprise java server for the gemini space.
 
-* Define design pattern for creating servers
-* Outline path to
+## About
+
+At its core JGS is just another gemini server, but written in Java using Netty. This project includes 2 main modules - lib and server - which are for you to include in your custom server project. It also provides config-typesafe - a configuration implementation using the typesafe config format, and standalone-gemini-server which is a fully implemented gemini server that you can configure and run without any code customization! 
+
+### Certs
+
+To set up compatible certs you only need to ensure your key is pkcs8 format. Here is how I generated my cert/key pair
+
+```sh cert setup commands
+openssl genrsa -out server.key 4096 # generate a new key
+openssl pkcs8 -nocrypt -topk8 -in server.key -out server.enc.key # required format for the server
+
+# Now generate the cert - I like to use a config file for the cert properties, but it's optional
+nano server.cnf # create a config for the req command (setup your DN/AltNames/etc)
+openssl req -new -x509 -key server.enc.key -nodes -days 3560 -out server.crt -config server.cnf
+```
+
+## Goals
+
+The goal of this server is to allow you to write custom server side code. Rather than exporting your logic to a CGI you can run your logic in native java code. You can simply include in your project the lib and server packages and write your custom server. The standalone-gemini-server can be used as a template for bootstraping your server implementation. 
+
+The standalone-gemini-server is a prepackaged, provided as a tar.gz, server implementation for you to extract and configure to your needs. This will server, without any custom code, all of your basic server needs (file serving, etc). It may be limited in general compared to writing your own custom server, but should be equivalent to other standalone servers like Molly Brown.
+
+## Progress
+
+I am developing this in my free time so progress is slow. 
+
+### Missing features
+
+* [ ] CGI
+* [ ] Client Certs
+
+### Path to Alpha
+
+* [ ] 100% code coverage
+* [ ] 100% javadoc
+* [ ] Deployable package
+* [x] Isolated logging
+* [ ] Maven Central? (optional)
+
+### Path to Beta
+
+* [ ] CI/CD (optional)
+* [ ] Published on git
+* [ ] Client Certs
+* [ ] CGI Support
+* [ ] Maven Central (required)
+
+### Path to Production
+
+* [ ] Docs on Gemini
+* [ ] Docs on HTTP
+* [ ] CI/CD (required)
+
+## License
+
+Copyright 2021 senders <stephen (at) senders.io>
+This project is licensed under GPL v2 see LICENSE file for license and copyright information
+
