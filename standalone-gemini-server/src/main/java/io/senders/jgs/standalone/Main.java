@@ -1,3 +1,24 @@
+/*-
+ * -\-\-
+ * Standalone Java Gemini Server
+ * --
+ * Copyright (C) 2021 senders <stephen (at) senders.io>
+ * --
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * -/-/-
+ */
 package io.senders.jgs.standalone;
 
 import io.senders.jgs.configs.ServerConfig;
@@ -10,17 +31,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/** Runs a standalone gemini file server. */
 public class Main {
 
   public static void main(String... args) throws Exception {
-    /*
-     Initialize the configuration. Being a standalone implementation I tried to give a few options.
-     But ideally you would just put the gemini-server.conf in your working directory and not need
-     to pass in any overrides. But the point of this is you don't actually provide any additional
-     code just config changes, so you could pass in your local env version that binds to localhost
-     and keep your production one being gemini-server.conf for example.
-    */
     ServerConfig config = null;
     if (args.length == 1 && args[0].endsWith(".conf")) {
       var file = Path.of(args[0]).toFile();

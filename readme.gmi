@@ -59,5 +59,4 @@ I am developing this in my free time so progress is slow.
 ## License
 
 Copyright 2021 senders <stephen (at) senders.io>
-This project is licensed under GPL v2 see LICENSE file for license and copyright information
-
+This project is licensed under GPL v2 see LICENSE.txt for details

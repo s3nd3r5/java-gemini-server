@@ -19,5 +19,8 @@
     <file>
       <source>../logback.xml</source>
     </file>
+    <file>
+      <source>../LICENSE.txt</source>
+    </file>
   </files>
 </assembly>

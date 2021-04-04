@@ -19,9 +19,14 @@
     <license>
       <name>GNU General Public License version 2</name>
       <url>http://www.gnu.org/licenses/gpl-2.0.txt</url>
-      <distribution>manual</distribution>
+      <distribution>repo</distribution>
     </license>
   </licenses>
+  <organization>
+    <name>senders &lt;stephen (at) senders.io&gt;</name>
+    <url>https://senders.io</url>
+  </organization>
+  <inceptionYear>2021</inceptionYear>
 
   <properties>
     <maven.compiler.source>11</maven.compiler.source>
@@ -143,14 +148,19 @@
             <id>first</id>
             <goals>
               <goal>update-file-header</goal>
+              <goal>update-project-license</goal>
             </goals>
             <phase>process-sources</phase>
             <configuration>
+              <addJavaLicenseAfterPackage>false</addJavaLicenseAfterPackage>
               <licenseName>gpl_v2</licenseName>
               <roots>
                 <root>src/main/java</root>
                 <root>src/test/java</root>
               </roots>
+              <processStartTag>-\-\-</processStartTag>
+              <sectionDelimiter>--</sectionDelimiter>
+              <processEndTag>-/-/-</processEndTag>
             </configuration>
           </execution>
         </executions>

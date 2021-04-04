@@ -1,3 +1,24 @@
+/*-
+ * -\-\-
+ * Java Gemini Library
+ * --
+ * Copyright (C) 2021 senders <stephen (at) senders.io>
+ * --
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * -/-/-
+ */
 package io.senders.jgs.configs;
 
 import java.util.HashMap;
@@ -17,44 +38,18 @@ public class ServerConfig {
     this.hosts = Map.copyOf(Objects.requireNonNull(hosts, "hosts"));
   }
 
-  /**
-   * Is SNI (Server Name Indication) enabled for the server. This allows using separate certs for
-   * each host.
-   *
-   * @return sni configuration status (true if enabled)
-   */
   public boolean sni() {
     return sni;
   }
 
-  /**
-   * The port the server will listen on.
-   *
-   * @return port number
-   */
   public int port() {
     return port;
   }
 
-  /**
-   * The default hostname. Used to fetch the host from the hosts map config and as the default host
-   * to provide from SNI. To disable default host cert providing in SNI omit this configuration.
-   *
-   * @return the default hostname
-   */
   public String hostname() {
     return hostname;
   }
 
-  /**
-   * The host configuration mapping to be used by the server. Requires at least one host
-   * configuration to be set. Each {@link HostConfig} is mapped by hostname (FQDN).
-   *
-   * <p>// TODO Make note about how to configure wildcard support - link to whichever server class
-   * implements the SNI configuration
-   *
-   * @return host mapping
-   */
   public Map<String, HostConfig> hosts() {
     return hosts;
   }
@@ -67,19 +62,10 @@ public class ServerConfig {
     throw new IllegalStateException("Default hostname " + hostname + " has no config.");
   }
 
-  /** @see ServerConfig for defaults and required fields. */
   public static Builder newBuilder() {
     return new Builder();
   }
 
-  /**
-   * Construct a builder from an existing ServerConfig.
-   *
-   * @param fromConfig configuration to set the initial builder values to
-   * @see #newBuilder()
-   * @implNote hosts will by copied into a new mutable
-   * @see Builder#withHosts(Map) for overwritting the fromConfig host mapping
-   */
   public static Builder newBuilder(final ServerConfig fromConfig) {
     return new Builder()
         .withSni(fromConfig.sni)

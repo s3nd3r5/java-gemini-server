@@ -9,6 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Standalone Java Gemini Server</name>
   <artifactId>standalone-gemini-server</artifactId>
 
   <properties>

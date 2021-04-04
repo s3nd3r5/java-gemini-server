@@ -9,6 +9,7 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
+  <name>Java Gemini Server Config Typesafe Implementation</name>
   <artifactId>config-typesafe</artifactId>
 
   <properties>

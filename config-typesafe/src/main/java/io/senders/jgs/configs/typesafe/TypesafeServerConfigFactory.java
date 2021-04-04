@@ -1,3 +1,24 @@
+/*-
+ * -\-\-
+ * Java Gemini Server Config Typesafe Implementation
+ * --
+ * Copyright (C) 2021 senders <stephen (at) senders.io>
+ * --
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-2.0.html>.
+ * -/-/-
+ */
 package io.senders.jgs.configs.typesafe;
 
 import com.typesafe.config.Config;
@@ -17,32 +38,14 @@ public class TypesafeServerConfigFactory {
 
   private TypesafeServerConfigFactory() {}
 
-  /**
-   * Create a server config from the gemini-server.conf file in the working directory
-   *
-   * @see TypesafeServerConfigFactory#create(String)
-   * @return the server config built from the conf file
-   */
   public static ServerConfig create() {
     return create("./gemini-server.conf");
   }
 
-  /**
-   * Create a server config from the provided path.
-   *
-   * @param configPath the path to the config file
-   * @return the server config built from the conf file
-   */
   public static ServerConfig create(final String configPath) {
     return create(Path.of(configPath));
   }
 
-  /**
-   * Create a server config from the provided path.
-   *
-   * @param configPath the path to the config file
-   * @return the server config built from the conf file
-   */
   public static ServerConfig create(final Path configPath) {
     File file = configPath.toFile();
     if (!file.exists() || !file.canRead()) {
