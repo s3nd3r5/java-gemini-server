@@ -117,7 +117,7 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
     ByteBuf res = ctx.alloc().buffer(data.length);
     res.writeBytes(data);
 
-    logger.info("OUT\t{}\t{}\t{}", msg.status(), msg.meta(), data.length);
+    accessLogger.out(msg.status(), msg.meta(), data.length);
 
     ctx.writeAndFlush(res);
     ctx.close();

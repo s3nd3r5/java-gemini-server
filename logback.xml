@@ -3,8 +3,9 @@
 <configuration>
   <!-- Stop output INFO at start -->
   <statusListener class="ch.qos.logback.core.status.NopStatusListener"/>
-  <property name="LOG_DIR" value="./log/jgs/"/>
-  <property name="LOG_ARCHIVE" value="./log/jgs/"/>
+  <property name="LOG_DIR" value="/var/log/jgs/"/>
+  <property name="LOG_ARCHIVE" value="/var/log/jgs/"/>
+
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC} [%thread] %-5level %logger{36} - %msg%n
@@ -12,29 +13,18 @@
     </encoder>
   </appender>
 
-  <appender name="ALL" class="ch.qos.logback.core.RollingFileAppender">
+  <appender name="ALL" class="ch.qos.logback.core.FileAppender">
     <file>${LOG_DIR}/all.log</file>
     <append>true</append>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${LOG_ARCHIVE}/all.%d{yyyy-MM-dd}.log</fileNamePattern>
-      <maxHistory>30</maxHistory>
-      <totalSizeCap>100MB</totalSizeCap>
-    </rollingPolicy>
     <encoder>
       <pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC} [%thread] %-5level %logger{35} - %msg%n
       </pattern>
     </encoder>
   </appender>
 
-  <appender name="ACCESS" class="ch.qos.logback.core.RollingFileAppender">
+  <appender name="ACCESS" class="ch.qos.logback.core.FileAppender">
     <file>${LOG_DIR}/access.log</file>
     <append>true</append>
-
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${LOG_ARCHIVE}/access.%d{yyyy-MM-dd}.log</fileNamePattern>
-      <maxHistory>30</maxHistory>
-      <totalSizeCap>100MB</totalSizeCap>
-    </rollingPolicy>
     <encoder>
       <Pattern>
         %date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC}\t%msg%n
@@ -42,15 +32,9 @@
     </encoder>
   </appender>
 
-  <appender name="ERR" class="ch.qos.logback.core.RollingFileAppender">
+  <appender name="ERR" class="ch.qos.logback.core.FileAppender">
     <file>${LOG_DIR}/error.log</file>
     <append>true</append>
-
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-      <fileNamePattern>${LOG_ARCHIVE}/error.%d{yyyy-MM-dd}.log</fileNamePattern>
-      <maxHistory>30</maxHistory>
-      <totalSizeCap>100MB</totalSizeCap>
-    </rollingPolicy>
     <encoder>
       <pattern>%date{"yyyy-MM-dd'T'HH:mm:ss,SSSXXX", UTC} [%thread] %-5level %logger{35} - %msg%n
       </pattern>

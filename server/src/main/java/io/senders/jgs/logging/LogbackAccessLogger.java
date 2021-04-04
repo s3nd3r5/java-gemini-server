@@ -11,38 +11,22 @@ public class LogbackAccessLogger implements AccessLogger {
   @Override
   public void in(Object... arguments) {
     if (arguments == null) {
-      in("IN");
+      log("IN");
     } else {
-      in("IN" + "\t{}".repeat(arguments.length), arguments);
+      log("IN" + "\t{}".repeat(arguments.length), arguments);
     }
-  }
-
-  @Override
-  public void in(String fmt, Object... arguments) {
-    logger.info(fmt, arguments);
-  }
-
-  @Override
-  public void in(String msg) {
-    logger.info(msg);
   }
 
   @Override
   public void out(Object... arguments) {
     if (arguments == null) {
-      in("OUT");
+      log("OUT");
     } else {
-      in("OUT" + "\t{}".repeat(arguments.length), arguments);
+      log("OUT" + "\t{}".repeat(arguments.length), arguments);
     }
   }
 
-  @Override
-  public void out(String fmt, Object... arguments) {
+  private void log(String fmt, Object... arguments) {
     logger.info(fmt, arguments);
-  }
-
-  @Override
-  public void out(String msg) {
-    logger.info(msg);
   }
 }
