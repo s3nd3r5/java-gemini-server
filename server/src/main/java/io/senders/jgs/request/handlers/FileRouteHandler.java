@@ -43,6 +43,12 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Default File Handler. Will lookup a file based on the configuration used and serve it.
+ *
+ * @see io.senders.jgs.configs.HostConfig
+ * @see io.senders.jgs.configs.DocsConfig
+ */
 public class FileRouteHandler implements RequestHandler {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -59,6 +65,12 @@ public class FileRouteHandler implements RequestHandler {
     this.defaultLang = defaultLang;
   }
 
+  /**
+   * Build a file handler from the host configuration.
+   *
+   * @param config host configuration
+   * @return new FileRouteHandler based on the specified configs
+   */
   public static FileRouteHandler fromConfig(final HostConfig config) {
     final MimeTypes mimeTypes = new MimeTypes(config.docs().mimeOverrides().extensions());
     final String docRoot = config.docs().root();
@@ -67,6 +79,13 @@ public class FileRouteHandler implements RequestHandler {
     return new FileRouteHandler(mimeTypes, docRoot, defaultLang);
   }
 
+  /**
+   * Server a response based on the incoming request details. If the request is a directory it will
+   * generate an index if none found.
+   *
+   * @param request file request
+   * @return response message, a {@link ResponseDoc} when successful
+   */
   @Override
   public ResponseMessage handle(Request request) {
     var uri = request.uri();
@@ -84,7 +103,7 @@ public class FileRouteHandler implements RequestHandler {
 
       if (!file.exists() || !file.canRead()) {
         if (path.endsWith("index.gmi")) {
-          return generateDirectory(uri.getPath(), docPath);
+          return generateDirectoryIndex(uri.getPath(), docPath);
         }
         throw new ResourceNotFoundException(path + " not found");
       }
@@ -100,7 +119,16 @@ public class FileRouteHandler implements RequestHandler {
     }
   }
 
-  private ResponseDoc generateDirectory(String uriPath, Path docPath) {
+  /**
+   * Generates an index for the directory requested
+   *
+   * @param uriPath directory root of the request
+   * @param docPath directory root on the host
+   * @return {@link ResponseDoc} of a generated index
+   * @implNote made public so it can be overridden by anyone who wants to customize their generated
+   *     index
+   */
+  public ResponseDoc generateDirectoryIndex(String uriPath, Path docPath) {
     StringBuilder directoryResponse = new StringBuilder();
     directoryResponse.append("# Directory Index").append("\r\n").append("\r\n");
     var parent = docPath.getParent();

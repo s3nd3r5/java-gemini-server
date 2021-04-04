@@ -21,12 +21,35 @@
  */
 package io.senders.jgs.logging;
 
+/** Custom logger for access logs. Used to separate server logs from access logs. */
 public interface AccessLogger {
+
+  /**
+   * Log incoming request information
+   *
+   * @param arguments request info to log
+   */
   void in(Object... arguments);
 
+  /**
+   * Log outgoing response information
+   *
+   * @param arguments response info to log
+   */
   void out(Object... arguments);
 
+  /**
+   * Generic log method. You can specify a custom format and arguments
+   *
+   * @param fmt message format for log
+   * @param arguments info to log
+   */
   void log(String fmt, Object... arguments);
 
+  /**
+   * Generic log method to log any string
+   *
+   * @param msg message to log
+   */
   void log(String msg);
 }

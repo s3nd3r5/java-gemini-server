@@ -25,8 +25,18 @@ import io.senders.jgs.request.Request;
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
 
+/**
+ * Server a 51 Not Found for any request passed to this handler. This can be used as a catch-all in
+ * your server configuration.
+ *
+ * @see GeminiStatus#NOT_FOUND
+ */
 public class NotFoundHandler implements RequestHandler {
 
+  /**
+   * @param request request of the not found resource
+   * @return a not found construction of a {@link ResponseMessage}
+   */
   @Override
   public ResponseMessage handle(final Request request) {
     return new ResponseMessage(GeminiStatus.NOT_FOUND, request.uri().getPath() + " is not found.");

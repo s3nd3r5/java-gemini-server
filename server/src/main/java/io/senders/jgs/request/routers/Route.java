@@ -25,19 +25,45 @@ import io.senders.jgs.request.Request;
 import io.senders.jgs.response.ResponseMessage;
 import java.util.function.Function;
 
+/**
+ * Defines a route path and the handler to be used when a request matches this route.
+ *
+ * @see Router
+ * @see io.senders.jgs.request.RequestMessageAdapter
+ */
 public class Route {
   private final String route;
   private final Function<Request, ResponseMessage> handleFn;
 
+  /**
+   * Create a new Route definition
+   *
+   * @param route route path
+   * @param handleFn request handler
+   */
   public Route(String route, Function<Request, ResponseMessage> handleFn) {
     this.route = route;
     this.handleFn = handleFn;
   }
 
+  /**
+   * Get the route path
+   *
+   * @return route path
+   */
   public String route() {
     return this.route;
   }
 
+  /**
+   * handle the incoming request matched for this route
+   *
+   * @param request incoming request information
+   * @return {@link ResponseMessage} based on the handler of this route
+   * @implNote This method does not guarantee the request matches the route. That is to be handled
+   *     externally.
+   * @see io.senders.jgs.request.RequestMessageAdapter
+   */
   public ResponseMessage handle(final Request request) {
     return this.handleFn.apply(request);
   }

@@ -25,10 +25,26 @@ import java.lang.invoke.MethodHandles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Logback implementation of the AccessLogger. Uses the SLF4J logback implementation and is
+ * configured in the root logback.xml to write to a separate file than the standard loggers in each
+ * class. Can be configured by specifying the logger in your logback.xml using the * fully qualified
+ * classname: io.senders.jgs.logging.LogbackAccessLogger
+ *
+ * @see Logger
+ */
 public class LogbackAccessLogger implements AccessLogger {
+
+  /** Logger implementation. */
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  /**
+   * Logs incoming request information
+   *
+   * @param arguments request info to log
+   * @implNote uses TSV format IN\t{}\t{} etc
+   */
   @Override
   public void in(Object... arguments) {
     if (arguments == null) {
@@ -38,6 +54,12 @@ public class LogbackAccessLogger implements AccessLogger {
     }
   }
 
+  /**
+   * Logs outgoing response information
+   *
+   * @param arguments response info to log
+   * @implNote uses TSV format OUT\t{}\t{} etc
+   */
   @Override
   public void out(Object... arguments) {
     if (arguments == null) {
@@ -47,11 +69,24 @@ public class LogbackAccessLogger implements AccessLogger {
     }
   }
 
+  /**
+   * Wraps slf4j info log API
+   *
+   * @param fmt message format for log
+   * @param arguments info to log
+   * @see Logger#info(String, Object...)
+   */
   @Override
   public void log(String fmt, Object... arguments) {
     logger.info(fmt, arguments);
   }
 
+  /**
+   * Wraps slf4j info log API
+   *
+   * @param msg message to log
+   * @see Logger#info(String)
+   */
   @Override
   public void log(String msg) {
     logger.info(msg);

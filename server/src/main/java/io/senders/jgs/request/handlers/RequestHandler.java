@@ -24,7 +24,14 @@ package io.senders.jgs.request.handlers;
 import io.senders.jgs.request.Request;
 import io.senders.jgs.response.ResponseMessage;
 
+/** Interface for handling {@link Request}s */
 public interface RequestHandler {
 
+  /**
+   * Method for handling {@link Request}s
+   *
+   * @param request incoming request information
+   * @return {@link ResponseMessage} for the request
+   */
   ResponseMessage handle(final Request request);
 }
