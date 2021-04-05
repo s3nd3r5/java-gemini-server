@@ -9,7 +9,7 @@
       <directory>target/</directory>
       <includes>
         <include>lib/</include>
-        <include>*.jar</include>
+        <include>server.jar</include>
       </includes>
       <!-- don't compress the 'target' directory, put it at the root of the archive -->
       <outputDirectory>./</outputDirectory>
@@ -17,10 +17,16 @@
   </fileSets>
   <files>
     <file>
-      <source>../logback.xml</source>
+      <source>logback.xml</source>
     </file>
     <file>
-      <source>../LICENSE.txt</source>
+      <source>LICENSE.txt</source>
+    </file>
+    <file>
+      <source>Dockerfile</source>
+    </file>
+    <file>
+      <source>gemini-server.conf</source>
     </file>
   </files>
 </assembly>

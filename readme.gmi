@@ -16,7 +16,7 @@ openssl pkcs8 -nocrypt -topk8 -in server.key -out server.enc.key # required form
 
 # Now generate the cert - I like to use a config file for the cert properties, but it's optional
 nano server.cnf # create a config for the req command (setup your DN/AltNames/etc)
-openssl req -new -x509 -key server.enc.key -nodes -days 3560 -out server.crt -config server.cnf
+openssl req -new -x509 -key server.enc.key -nodes -days 3650 -out server.crt -config server.cnf
 ```
 
 ## Goals
