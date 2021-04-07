@@ -26,7 +26,7 @@ import io.senders.jgs.exceptions.InvalidResourceException;
 import io.senders.jgs.exceptions.ResourceNotFoundException;
 import io.senders.jgs.mime.MimeTypes;
 import io.senders.jgs.request.Request;
-import io.senders.jgs.response.ResponseDoc;
+import io.senders.jgs.response.FileResponseMessage;
 import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.status.GeminiStatus;
 import io.senders.jgs.util.FileUtil;
@@ -84,7 +84,7 @@ public class FileRouteHandler implements RequestHandler {
    * generate an index if none found.
    *
    * @param request file request
-   * @return response message, a {@link ResponseDoc} when successful
+   * @return response message, a {@link FileResponseMessage} when successful
    */
   @Override
   public ResponseMessage handle(Request request) {
@@ -112,7 +112,7 @@ public class FileRouteHandler implements RequestHandler {
       String mimeType = mimeTypes.getMimeType(extension, Files.probeContentType(docPath));
       byte[] data = Files.readAllBytes(docPath);
 
-      return new ResponseDoc(mimeType, null, defaultLang, data);
+      return new FileResponseMessage(mimeType, null, defaultLang, data);
     } catch (IOException e) {
       logger.error("Unable to read resource", e);
       throw new InvalidResourceException("Unexpected error reading requested resource");
@@ -124,11 +124,11 @@ public class FileRouteHandler implements RequestHandler {
    *
    * @param uriPath directory root of the request
    * @param docPath directory root on the host
-   * @return {@link ResponseDoc} of a generated index
+   * @return {@link FileResponseMessage} of a generated index
    * @implNote made public so it can be overridden by anyone who wants to customize their generated
    *     index
    */
-  public ResponseDoc generateDirectoryIndex(String uriPath, Path docPath) {
+  public FileResponseMessage generateDirectoryIndex(String uriPath, Path docPath) {
     StringBuilder directoryResponse = new StringBuilder();
     directoryResponse.append("# Directory Index").append("\r\n").append("\r\n");
     var parent = docPath.getParent();
@@ -148,7 +148,7 @@ public class FileRouteHandler implements RequestHandler {
               .collect(Collectors.joining("\r\n"));
       directoryResponse.append(fileList).append("\r\n").append("\r\n");
       directoryResponse.append("This directory was auto-generated").append("\r\n");
-      return new ResponseDoc(
+      return new FileResponseMessage(
           mimeTypes.getMimeType("gmi", "text/gemini"),
           StandardCharsets.UTF_8.displayName(),
           defaultLang,

@@ -21,6 +21,7 @@
  */
 package io.senders.jgs.response;
 
+import io.senders.jgs.exceptions.InvalidResponseException;
 import io.senders.jgs.status.GeminiStatus;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
@@ -32,23 +33,47 @@ public class ResponseMessage {
   private final String status;
   private final String meta;
 
+  /**
+   * Create a new response. Consult the gemini specification for what the meta needs to be for the
+   * given status. If additional data needs to be sent along with the response extend this class and
+   * override the {@link #toBytes()} method.
+   *
+   * @param status status of the response
+   * @param meta meta of the response
+   */
   public ResponseMessage(final GeminiStatus status, final String meta) {
     this.status = Objects.requireNonNull(status, "status").code();
     if (meta != null && meta.length() > META_MAX_LEN) {
-      // TODO pick a better exception
-      throw new RuntimeException("Meta too long " + meta.length() + ": " + meta);
+      throw new InvalidResponseException("Meta too long " + meta.length() + ": " + meta);
     }
     this.meta = meta;
   }
 
+  /**
+   * Get status of the response
+   *
+   * @return status number as string
+   */
   public String status() {
     return this.status;
   }
 
+  /**
+   * Get meta of the response
+   *
+   * @return meta string
+   */
   public String meta() {
     return this.meta;
   }
 
+  /**
+   * Convert the response to bytes. If overriding this class and extra data is being contained
+   * please make sure to override this method if you need to send additional data in the response.
+   *
+   * @return byte[] of the response
+   * @see FileResponseMessage
+   */
   public byte[] toBytes() {
     return String.format(MESSAGE_FORMAT, status, meta).getBytes(StandardCharsets.UTF_8);
   }

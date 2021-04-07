@@ -32,16 +32,37 @@ import io.senders.jgs.util.SslContextFactory;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Implementation of Netty's {@link AsyncMapping}. Provides a mapping of hostname to {@link
+ * SslContext}. Used by {@link io.senders.jgs.server.Server} to handle the ssl handshake when using
+ * SNI.
+ */
 public class AsyncSniMapping implements AsyncMapping<String, SslContext> {
 
   private final Map<String, SslContext> mapping;
   private final SslContext defaultContext;
 
-  public AsyncSniMapping(final Map<String, SslContext> sslContextMap, SslContext defaultContext) {
+  /**
+   * Create a new AsyncSniMapping instance. Providing the mapping to be used by {@link
+   * io.senders.jgs.server.Server}
+   *
+   * @param sslContextMap map of hostnames to {@link SslContext}
+   * @param defaultContext optional default context to be used if hostname not in map
+   * @see #fromConfig(ServerConfig)
+   */
+  public AsyncSniMapping(
+      final Map<String, SslContext> sslContextMap, final SslContext defaultContext) {
     this.mapping = sslContextMap;
     this.defaultContext = defaultContext;
   }
 
+  /**
+   * Returns a future of the SslContext for the hostname input
+   *
+   * @param input hostname requested
+   * @param promise promise to be fulfilled when the result is available
+   * @return future of the result of the mapping
+   */
   @Override
   public Future<SslContext> map(String input, Promise<SslContext> promise) {
     var context = mapping.getOrDefault(input, defaultContext);
@@ -55,6 +76,12 @@ public class AsyncSniMapping implements AsyncMapping<String, SslContext> {
     }
   }
 
+  /**
+   * Create an SNI mapping from your server's configuration
+   *
+   * @param serverConfig configuration for your server
+   * @return a new mapping implementation
+   */
   public static AsyncSniMapping fromConfig(final ServerConfig serverConfig) {
     final Map<String, SslContext> mapping = new ConcurrentHashMap<>();
     serverConfig

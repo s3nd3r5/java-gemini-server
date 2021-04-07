@@ -23,13 +23,27 @@ package io.senders.jgs.request;
 
 import java.net.URI;
 
+/**
+ * Request container. Passed to your routes containing all the necessary, relevant request
+ * information.
+ */
 public class Request {
   private final URI uri;
 
+  /**
+   * Creates a new request for the given URI
+   *
+   * @param uri uri of the request
+   */
   public Request(URI uri) {
     this.uri = uri;
   }
 
+  /**
+   * Get the uri of the request
+   *
+   * @return uri of the request
+   */
   public URI uri() {
     return this.uri;
   }

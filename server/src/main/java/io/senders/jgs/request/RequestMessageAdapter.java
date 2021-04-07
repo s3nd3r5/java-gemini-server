@@ -99,7 +99,7 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
 
       ResponseMessage response =
           hosts.stream()
-              .filter(h -> h.hosts().equals(request.uri().getHost()))
+              .filter(h -> h.hostname().equals(request.uri().getHost()))
               .flatMap(h -> h.routers().stream())
               .flatMap(r -> r.routes().stream())
               .filter(r -> RouteMatcher.match(r.route(), request.uri()))

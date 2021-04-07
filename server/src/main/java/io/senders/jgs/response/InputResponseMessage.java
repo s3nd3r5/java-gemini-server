@@ -23,13 +23,31 @@ package io.senders.jgs.response;
 
 import io.senders.jgs.status.GeminiStatus;
 
+/**
+ * Helper class extending the {@link ResponseMessage} for Input responses.
+ *
+ * @see GeminiStatus#INPUT
+ * @see GeminiStatus#SENSITIVE_INPUT
+ */
 public class InputResponseMessage extends ResponseMessage {
 
+  /**
+   * Create a response with the given meta with the status code {@link GeminiStatus#INPUT}
+   *
+   * @param meta meta of the response
+   */
   public InputResponseMessage(String meta) {
     this(meta, false);
   }
 
-  public InputResponseMessage(String meta, boolean secure) {
-    super(secure ? GeminiStatus.SENSITIVE_INPUT : GeminiStatus.INPUT, meta);
+  /**
+   * Create a response with the given meta with the status code {@link GeminiStatus#SENSITIVE_INPUT}
+   * or {@link GeminiStatus#INPUT}
+   *
+   * @param meta meta of the response
+   * @param sensitive true for sensitive input, false for standard input
+   */
+  public InputResponseMessage(String meta, boolean sensitive) {
+    super(sensitive ? GeminiStatus.SENSITIVE_INPUT : GeminiStatus.INPUT, meta);
   }
 }

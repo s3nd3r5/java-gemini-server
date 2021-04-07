@@ -28,10 +28,25 @@ import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ResponseDoc extends ResponseMessage {
+/**
+ * Helper class for returning a file response. Provides the constructor for setting the meta fields
+ * that can be set when return some file.
+ *
+ * @implNote previous named DocResponse
+ */
+public class FileResponseMessage extends ResponseMessage {
   private final byte[] data;
 
-  public ResponseDoc(String mimeType, String charset, String lang, byte[] data) {
+  /**
+   * Create a new response
+   *
+   * @param mimeType mimeType of the file
+   * @param charset charset of the file
+   * @param lang language of the file
+   * @param data data of the file
+   */
+  public FileResponseMessage(
+      final String mimeType, final String charset, final String lang, final byte[] data) {
     super(GeminiStatus.SUCCESS, toMeta(mimeType, charset, lang));
     this.data = data;
   }
@@ -49,6 +64,11 @@ public class ResponseDoc extends ResponseMessage {
     return meta.toString();
   }
 
+  /**
+   * Convert the response to bytes
+   *
+   * @return byte[] of the response
+   */
   @Override
   public byte[] toBytes() {
     byte[] statusLine = super.toBytes();
@@ -70,12 +90,17 @@ public class ResponseDoc extends ResponseMessage {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ResponseDoc that = (ResponseDoc) o;
+    if (!super.equals(o)) {
+      return false;
+    }
+    FileResponseMessage that = (FileResponseMessage) o;
     return Arrays.equals(data, that.data);
   }
 
   @Override
   public int hashCode() {
-    return Arrays.hashCode(data);
+    int result = super.hashCode();
+    result = 31 * result + Arrays.hashCode(data);
+    return result;
   }
 }

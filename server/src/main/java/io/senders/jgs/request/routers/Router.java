@@ -26,8 +26,6 @@ import java.util.Collection;
 /**
  * An interface that defines a collection of {@link Route}s and how to handle them. This interface
  * can be implemented defining the routes it should handle and how to handle them.
- *
- * @see io.senders.jgs.request.routers.impls.BasicFileRouter for an implementation example.
  */
 public interface Router {
 
