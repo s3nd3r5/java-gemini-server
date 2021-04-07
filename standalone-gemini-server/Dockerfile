@@ -1,4 +1,4 @@
-FROM java:11
+FROM openjdk:11
 
 RUN mkdir /opt/jgs/
 WORKDIR /opt/jgs/
@@ -11,7 +11,7 @@ VOLUME /var/gemini
 COPY docker-entrypoint.sh ./
 COPY server.jar ./
 COPY logback.xml ./
-COPY lib  ./
+COPY lib  ./lib
 COPY gemini-server.conf ./
 
-ENTRYPOINT docker-entrypoint.sh
+ENTRYPOINT /opt/jgs/docker-entrypoint.sh
