@@ -33,6 +33,7 @@ import io.senders.jgs.request.handlers.NotFoundHandler;
 import io.senders.jgs.request.handlers.RequestHandler;
 import io.senders.jgs.request.routers.Host;
 import io.senders.jgs.response.ResponseMessage;
+import io.senders.jgs.server.Server;
 import io.senders.jgs.status.GeminiStatus;
 import io.senders.jgs.util.RouteMatcher;
 import java.lang.invoke.MethodHandles;
@@ -42,6 +43,13 @@ import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Handles taking in TCP requests from Netty and converting them to Gemini {@link Request}s and
+ * serving them to the relevant router. Then handles serving the output of the router back as a TCP
+ * response.
+ *
+ * @see Server#run()
+ */
 public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -49,21 +57,47 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
   private final Collection<Host> hosts;
   private final RequestHandler fallbackRouteHandler;
 
+  /**
+   * Creates a RequestMessageAdapter for a varargs of hosts
+   *
+   * @param hosts varargs of hosts
+   */
   public RequestMessageAdapter(Host... hosts) {
     this.hosts = Arrays.asList(hosts);
     this.fallbackRouteHandler = new NotFoundHandler();
   }
 
-  public RequestMessageAdapter(RequestHandler fallbackRouteHandler, Host... hosts) {
-    this.fallbackRouteHandler = fallbackRouteHandler;
+  /**
+   * Creates a RequestMessageAdapter for a varargs of hosts with a fallback {@link RequestHandler}
+   * if none of the hosts routes match.
+   *
+   * @param fallbackRequestHandler handler to be used if no other route's handler matches
+   * @param hosts varargs of hosts
+   */
+  public RequestMessageAdapter(RequestHandler fallbackRequestHandler, Host... hosts) {
+    this.fallbackRouteHandler = fallbackRequestHandler;
     this.hosts = Arrays.asList(hosts);
   }
 
-  public RequestMessageAdapter(final RequestHandler fallbackRouteHandler, Collection<Host> hosts) {
-    this.fallbackRouteHandler = fallbackRouteHandler;
+  /**
+   * Creates a RequestMessageAdapter for a varargs of hosts with a fallback {@link RequestHandler}
+   * if none of the hosts routes match.
+   *
+   * @param fallbackRequestHandler handler to be used if no other route's handler matches
+   * @param hosts collection of hosts
+   */
+  public RequestMessageAdapter(
+      final RequestHandler fallbackRequestHandler, Collection<Host> hosts) {
+    this.fallbackRouteHandler = fallbackRequestHandler;
     this.hosts = hosts;
   }
 
+  /**
+   * Handles the TCP request
+   *
+   * @param ctx channel context
+   * @param msg {@link ByteBuf} incoming message
+   */
   @Override
   public void channelRead(final ChannelHandlerContext ctx, final Object msg) {
     try {
@@ -124,6 +158,12 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
     }
   }
 
+  /**
+   * Handles an exception thrown during the handling of the TCP request
+   *
+   * @param ctx channel context
+   * @param cause exception thrown
+   */
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
     logger.debug("Caught exception", cause);
