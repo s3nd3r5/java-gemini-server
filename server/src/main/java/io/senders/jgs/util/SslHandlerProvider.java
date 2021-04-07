@@ -23,7 +23,14 @@ package io.senders.jgs.util;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.socket.SocketChannel;
+import io.senders.jgs.server.Server;
 import java.util.function.Function;
 
+/**
+ * Functional interface for abstracting how the channel handler is provided to the server. Used to
+ * allow SNI and non-SNI SslHandlers to be used in the {@link SocketChannel} pipeline.
+ *
+ * @see Server#run()
+ */
 public @FunctionalInterface interface SslHandlerProvider
     extends Function<SocketChannel, ChannelHandler> {}

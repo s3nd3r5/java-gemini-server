@@ -40,12 +40,23 @@ import io.senders.jgs.util.SslContextFactory;
 import io.senders.jgs.util.SslHandlerProvider;
 import java.util.Collection;
 
+/** Main server class for Java Gemini Server */
 public class Server {
 
   private final ServerConfig config;
   private final Collection<Host> hosts;
   private final RequestHandler defaultRouteHandler;
 
+  /**
+   * Create a new server
+   *
+   * @param config {@link ServerConfig} for the server
+   * @param hosts Collection of {@link Host} this server handles
+   * @param defaultRouteHandler default {@link RequestHandler} which handles any request that
+   *     doesn't match any router configured by any host.
+   * @see #newBuilder()
+   * @see ServerBuilder
+   */
   public Server(
       final ServerConfig config,
       final Collection<Host> hosts,
@@ -55,11 +66,21 @@ public class Server {
     this.defaultRouteHandler = defaultRouteHandler;
   }
 
+  /**
+   * Create a new builder for the server
+   *
+   * @return a new {@link ServerBuilder}
+   */
   public static ServerBuilder newBuilder() {
     return ServerBuilder.newBuilder();
   }
 
-  public void run() throws Exception {
+  /**
+   * Runs the server. This is the main blocking server function that runs your gemini server.
+   *
+   * <p>The logic in this function should be configured by the {@link ServerConfig}.
+   */
+  public void run() {
     // use default SslHandler or SniHandler based on SNI configuration
     final SslHandlerProvider sslHandlerProvider;
     if (config.sni()) {
@@ -89,8 +110,8 @@ public class Server {
               })
           .option(ChannelOption.SO_BACKLOG, 128)
           .childOption(ChannelOption.SO_KEEPALIVE, true);
-      final ChannelFuture cf = b.bind(config.port()).sync();
-      cf.channel().closeFuture().sync();
+      final ChannelFuture cf = b.bind(config.port()).syncUninterruptibly();
+      cf.channel().closeFuture().syncUninterruptibly();
     } finally {
       workerGroup.shutdownGracefully();
       mainGroup.shutdownGracefully();

@@ -28,7 +28,8 @@ import io.senders.jgs.request.routers.Host;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
+// DEV NOTES - This is a separate file intentionally to reduce clutter in the server class itself
+/** Builder class for {@link Server}. */
 public class ServerBuilder {
   private ServerConfig config;
   private Collection<Host> hosts = new ArrayList<>();

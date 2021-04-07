@@ -29,9 +29,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+/** Utility for getting information from a file. */
 public class FileUtil {
   private FileUtil() {}
 
+  /**
+   * Get the extension of the given filename
+   *
+   * @param filename filename to extract the extension from
+   * @return the extension of the file or else empty
+   */
   public static String getExtension(final String filename) {
     if (filename.lastIndexOf(".") > 0) {
       return filename.substring(filename.lastIndexOf('.') + 1);
@@ -40,7 +47,13 @@ public class FileUtil {
     }
   }
 
-  public static Optional<String> getTitle(final File file) throws UncheckedIOException {
+  /**
+   * Get the title from a gemtext file
+   *
+   * @param file gemtext file
+   * @return title from the gemtext file
+   */
+  public static Optional<String> getTitle(final File file) {
     try {
       return Files.readAllLines(Path.of(file.getAbsolutePath()), StandardCharsets.UTF_8).stream()
           .filter(l -> l.startsWith("# "))
