@@ -94,7 +94,10 @@ public class FileRouteHandler implements RequestHandler {
       if (path.endsWith("/")) {
         path += "index.gmi";
       }
-      Path docPath = Paths.get(docRoot, path);
+      Path docPath = Paths.get(docRoot, path).normalize();
+      if (!docPath.startsWith(docRoot)) {
+        throw new InvalidResourceException("Request invalid: " + path);
+      }
       File file = docPath.toFile();
 
       if (file.isDirectory()) {
