@@ -8,6 +8,9 @@
   <artifactId>java-gemini-server</artifactId>
   <packaging>pom</packaging>
   <version>0.0.1-SNAPSHOT</version>
+  <name>Java Gemini Server Parent</name>
+  <url>https://github.com/s3nd3r5/java-gemini-server</url>
+
   <modules>
     <module>server</module>
     <module>lib</module>
