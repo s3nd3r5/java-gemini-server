@@ -38,7 +38,7 @@ I am developing this in my free time so progress is slow.
 
 * [ ] 100% code coverage
 * [ ] 100% javadoc
-* [ ] Deployable package
+* [x] Deployable package
 * [x] Isolated logging
 * [ ] Maven Central? (optional)
 
