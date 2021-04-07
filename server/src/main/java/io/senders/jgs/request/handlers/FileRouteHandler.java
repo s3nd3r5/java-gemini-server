@@ -94,10 +94,10 @@ public class FileRouteHandler implements RequestHandler {
       if (path.endsWith("/")) {
         path += "index.gmi";
       }
-      Path docPath = Paths.get(docRoot, path).normalize();
-      if (!docPath.startsWith(docRoot)) {
-        throw new InvalidResourceException("Request invalid: " + path);
-      }
+      // Normalize the URI path before we append it to our docRoot
+      // This will ensure you can' /var/gemini/../../etc/passwd for example
+      Path docPath = Paths.get(docRoot, Path.of(path).normalize().toString()).normalize();
+
       File file = docPath.toFile();
 
       if (file.isDirectory()) {
