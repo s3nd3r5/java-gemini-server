@@ -1,0 +1,5 @@
+# JGS - Java Gemini Server
+
+An enterprise java server for the gemini space.
+
+See branch pre-alpha - as this server is still pre-alpha
