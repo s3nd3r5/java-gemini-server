@@ -28,5 +28,8 @@
     <file>
       <source>gemini-server.conf</source>
     </file>
+    <file>
+      <source>docker-entrypoint.sh</source>
+    </file>
   </files>
 </assembly>
