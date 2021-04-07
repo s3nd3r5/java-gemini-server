@@ -33,7 +33,7 @@ import java.util.Collection;
 
 public class Main {
 
-  public static void main(String... args) throws Exception {
+  public static void main(String... args) {
     ServerConfig config = null;
     if (args.length == 1 && args[0].endsWith(".conf")) {
       var file = Path.of(args[0]).toFile();
