@@ -60,3 +60,13 @@ I am developing this in my free time so progress is slow.
 
 Copyright 2021-2022 senders <steph (at) senders.io>
 This project is licensed under GPL v2 see LICENSE.txt for details
+
+### To add licenses
+
+Licenses should add automatically upon a maven build. However, if the licenses are not being added or need to be updated. Simply run:
+
+```
+mvn process-sources
+```
+
+to generate missing licenses. And to update do a global find replace to remove the existing licenses and then run the command to re-add them.
