@@ -36,6 +36,7 @@ import io.senders.jgs.response.ResponseMessage;
 import io.senders.jgs.server.Server;
 import io.senders.jgs.status.GeminiStatus;
 import io.senders.jgs.util.RouteMatcher;
+import io.senders.jgs.util.StaticIpAnonymizer;
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
   private static final Logger logger =
       LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private static final AccessLogger accessLogger = new LogbackAccessLogger();
+  private static final StaticIpAnonymizer ipAnonymizer = new StaticIpAnonymizer();
   private final Collection<Host> hosts;
   private final RequestHandler fallbackRouteHandler;
 
@@ -127,7 +129,7 @@ public class RequestMessageAdapter extends ChannelInboundHandlerAdapter {
         }
       }
       String url = urlBuffer.toString();
-      accessLogger.in(ctx.channel().remoteAddress(), url, bytesRead);
+      accessLogger.in(ipAnonymizer.getAnonymousIp(), url, bytesRead);
 
       final Request request = new Request(URI.create(url));
 
