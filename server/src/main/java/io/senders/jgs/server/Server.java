@@ -92,8 +92,8 @@ public class Server {
     }
 
     // main netty setup and loop
-    final EventLoopGroup mainGroup = new NioEventLoopGroup();
-    final EventLoopGroup workerGroup = new NioEventLoopGroup();
+    final EventLoopGroup mainGroup = new NioEventLoopGroup(config.numMainThreads());
+    final EventLoopGroup workerGroup = new NioEventLoopGroup(config.numWorkerThreads());
 
     try {
       ServerBootstrap b = new ServerBootstrap();
@@ -105,7 +105,8 @@ public class Server {
                 protected void initChannel(SocketChannel ch) {
                   ch.pipeline()
                       .addLast("ssl", sslHandlerProvider.apply(ch))
-                      .addLast(new RequestMessageAdapter(defaultRouteHandler, hosts));
+                      .addLast(new RequestMessageAdapter(defaultRouteHandler, hosts))
+                      .remove(this);
                 }
               })
           .option(ChannelOption.SO_BACKLOG, 128)

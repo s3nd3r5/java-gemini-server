@@ -28,14 +28,45 @@ import java.util.Objects;
 public class ServerConfig {
   private final boolean sni;
   private final int port;
+  private final int numMainThreads;
+  private final int numWorkerThreads;
   private final String hostname;
   private final Map<String, HostConfig> hosts;
 
   public ServerConfig(boolean sni, int port, String hostname, Map<String, HostConfig> hosts) {
     this.sni = sni;
     this.port = port;
+    this.numMainThreads = 0;
+    this.numWorkerThreads = 0;
     this.hostname = hostname;
     this.hosts = Map.copyOf(Objects.requireNonNull(hosts, "hosts"));
+  }
+
+  public ServerConfig(
+      boolean sni,
+      int port,
+      int numMainThreads,
+      int numWorkerThreads,
+      String hostname,
+      Map<String, HostConfig> hosts) {
+    this.sni = sni;
+    this.port = port;
+    this.numMainThreads = numMainThreads;
+    this.numWorkerThreads = numWorkerThreads;
+    this.hostname = hostname;
+    this.hosts = Map.copyOf(Objects.requireNonNull(hosts, "hosts"));
+  }
+
+  public static Builder newBuilder() {
+    return new Builder();
+  }
+
+  public static Builder newBuilder(final ServerConfig fromConfig) {
+    return new Builder()
+        .withSni(fromConfig.sni)
+        .withHostname(fromConfig.hostname)
+        .withHosts(fromConfig.hosts)
+        .withPort(fromConfig.port);
   }
 
   public boolean sni() {
@@ -44,6 +75,14 @@ public class ServerConfig {
 
   public int port() {
     return port;
+  }
+
+  public int numMainThreads() {
+    return numMainThreads;
+  }
+
+  public int numWorkerThreads() {
+    return numWorkerThreads;
   }
 
   public String hostname() {
@@ -62,18 +101,6 @@ public class ServerConfig {
     throw new IllegalStateException("Default hostname " + hostname + " has no config.");
   }
 
-  public static Builder newBuilder() {
-    return new Builder();
-  }
-
-  public static Builder newBuilder(final ServerConfig fromConfig) {
-    return new Builder()
-        .withSni(fromConfig.sni)
-        .withHostname(fromConfig.hostname)
-        .withHosts(fromConfig.hosts)
-        .withPort(fromConfig.port);
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -82,33 +109,47 @@ public class ServerConfig {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    ServerConfig config = (ServerConfig) o;
-    return sni == config.sni
-        && port == config.port
-        && Objects.equals(hostname, config.hostname)
-        && Objects.equals(hosts, config.hosts);
+    ServerConfig that = (ServerConfig) o;
+    return sni == that.sni
+        && port == that.port
+        && numMainThreads == that.numMainThreads
+        && numWorkerThreads == that.numWorkerThreads
+        && Objects.equals(hostname, that.hostname)
+        && Objects.equals(hosts, that.hosts);
   }
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder("ServerConfig{");
-    sb.append("sni=").append(sni);
-    sb.append(", port=").append(port);
-    sb.append(", hostname='").append(hostname).append('\'');
-    sb.append(", hosts=").append(hosts);
-    sb.append('}');
-    return sb.toString();
+    String sb =
+        "ServerConfig{"
+            + "sni="
+            + sni
+            + ", port="
+            + port
+            + ", numMainThreads="
+            + numMainThreads
+            + ", numWorkerThreads="
+            + numWorkerThreads
+            + ", hostname='"
+            + hostname
+            + '\''
+            + ", hosts="
+            + hosts
+            + '}';
+    return sb;
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(sni, port, hostname, hosts);
+    return Objects.hash(sni, port, numMainThreads, numWorkerThreads, hostname, hosts);
   }
 
   public static class Builder {
 
     private boolean sni;
     private int port;
+    private int numMainThreads;
+    private int numWorkerThreads;
     private String hostname;
     private Map<String, HostConfig> hosts = new HashMap<>();
 
@@ -135,6 +176,38 @@ public class ServerConfig {
      */
     public Builder withPort(int port) {
       this.port = port;
+      return this;
+    }
+
+    /**
+     * Sets the number of threads for the main NIO group.
+     *
+     * @param nThreads number of threads - 0 means unbound
+     * @return self
+     * @see ServerConfig#numMainThreads()
+     * @see <a
+     *     href="https://netty.io/4.1/api/io/netty/bootstrap/ServerBootstrap.html#group-io.netty.channel.EventLoopGroup-io.netty.channel.EventLoopGroup-"
+     *     >Netty 4.1 Javadoc for ServerBootstrap#group(EventLoopGroup parent, EventLoopGroup child)
+     *     </a>
+     */
+    public Builder withNumMainThreads(int nThreads) {
+      this.numMainThreads = nThreads;
+      return this;
+    }
+
+    /**
+     * Sets the number of threads for the worker NIO group.
+     *
+     * @param nThreads number of threads - 0 means unbound
+     * @return self
+     * @see ServerConfig#numWorkerThreads()
+     * @see <a
+     *     href="https://netty.io/4.1/api/io/netty/bootstrap/ServerBootstrap.html#group-io.netty.channel.EventLoopGroup-io.netty.channel.EventLoopGroup-"
+     *     >Netty 4.1 Javadoc for ServerBootstrap#group(EventLoopGroup parent, EventLoopGroup child)
+     *     </a>
+     */
+    public Builder withNumWorkerThreads(int nThreads) {
+      this.numWorkerThreads = nThreads;
       return this;
     }
 
@@ -202,7 +275,7 @@ public class ServerConfig {
      * @see ServerConfig for required fields and validation
      */
     public ServerConfig build() {
-      return new ServerConfig(sni, port, hostname, hosts);
+      return new ServerConfig(sni, port, numMainThreads, numWorkerThreads, hostname, hosts);
     }
   }
 }

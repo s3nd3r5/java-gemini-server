@@ -118,6 +118,8 @@ public class TypesafeServerConfigFactory {
     return ServerConfig.newBuilder()
         .withSni(getBoolean(config, "sni", false))
         .withPort(config.getInt("port"))
+        .withNumMainThreads(getInt(config, "numMainThreads", 0))
+        .withNumWorkerThreads(getInt(config, "numWorkerThreads", 0))
         .withHostname(config.getString("hostname"))
         .withHosts(hostConfigMap)
         .build();
@@ -130,6 +132,14 @@ public class TypesafeServerConfigFactory {
   private static boolean getBoolean(Config config, String path, boolean defaultVal) {
     if (config.hasPath(path)) {
       return config.getBoolean(path);
+    } else {
+      return defaultVal;
+    }
+  }
+
+  private static int getInt(Config config, String path, int defaultVal) {
+    if (config.hasPath(path)) {
+      return config.getInt(path);
     } else {
       return defaultVal;
     }

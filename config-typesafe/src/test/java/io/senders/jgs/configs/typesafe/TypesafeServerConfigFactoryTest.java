@@ -95,6 +95,8 @@ class TypesafeServerConfigFactoryTest {
         ServerConfig.newBuilder()
             .withSni(true)
             .withPort(19650)
+            .withNumMainThreads(1)
+            .withNumWorkerThreads(1)
             .withHostname("senders.io")
             .withHosts(
                 Map.of(
@@ -157,5 +159,14 @@ class TypesafeServerConfigFactoryTest {
         () ->
             TypesafeServerConfigFactory.create(
                 MethodHandles.lookup().lookupClass().getResource("/empty.conf").getPath()));
+  }
+
+  // added in a later version
+  // ensure compatibility with existing configs when unset
+  @Test
+  void testNoThreadsSetToZero() {
+    ServerConfig minimal = TypesafeServerConfigFactory.create();
+    assertEquals(0, minimal.numMainThreads());
+    assertEquals(0, minimal.numWorkerThreads());
   }
 }
