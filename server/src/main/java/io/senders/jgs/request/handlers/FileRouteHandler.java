@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,9 +136,9 @@ public class FileRouteHandler implements RequestHandler {
     StringBuilder directoryResponse = new StringBuilder();
     directoryResponse.append("# Directory Index").append("\r\n").append("\r\n");
     var parent = docPath.getParent();
-    try {
+    try (Stream<Path> stream = Files.walk(parent, 1)) {
       String fileList =
-          Files.walk(parent, 1)
+          stream
               .map(Path::toFile)
               .filter(File::isFile)
               .filter(File::canRead)
